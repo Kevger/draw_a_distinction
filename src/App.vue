@@ -1,28 +1,39 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-main>
+      <Canvas />
+    </v-main>
+    <Menu2 @explainWhy="explainingWhy = true" />
+
+    <v-dialog v-model="explainingWhy" fullscreen>
+      <ExplanationWhy @windowClosed="explainingWhy = false" />
+    </v-dialog>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Canvas from "./components/Canvas";
+import Menu2 from "./components/Menu2";
+import ExplanationWhy from "./components/ExplanationWhy";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
+  name: "App",
 
+  components: {
+    Canvas,
+    Menu2,
+    ExplanationWhy
+  },
+  methods : {
+  },
+  data: () => ({
+    explainingWhy: false
+  }),
+};
+</script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+html {
+  overflow-y: auto !important;
+  overflow: hidden !important; /* Hide scrollbars */
 }
 </style>
