@@ -1,5 +1,5 @@
 <template>
-  <div ref="stageContainer" style="position: relative">
+  <div v-resize="handleResize" ref="stageContainer" style="position: relative">
     <v-stage
       ref="stage"
       :config="configKonva"
@@ -30,27 +30,19 @@
         <v-circle ref="mCircle" :config="mCircleConfig" />
       </v-layer>
     </v-stage>
-
-    <v-card
+    <v-chip
       color="primary"
-      style="padding: 0.3%; position: absolute; left: 1%; bottom: 1%"
+      style="position: absolute; left: 1%; bottom: 1%"
       text-color="white"
+      :class="`elevation-2`"
     >
-      <div style="white-space: nowrap; color: white">
-        {{ " " + statusText + " " }}
-      </div>
-    </v-card>
-
-    <v-card
-      color="primary"
-      style="padding: 0.3%; position: absolute; right: 1%; bottom: 1%"
-      text-color="white"
-    >
-      <div style="white-space: nowrap; color: white">
-        {{ statusOperation }}
-      </div>
-    </v-card>
-
+      <v-icon v-if="isRunning">{{
+        statusOperation == "crossing"
+          ? "mdi-circle-double"
+          : "mdi-circle-multiple-outline"
+      }}</v-icon>
+      {{ isRunning ? statusOperation : statusText }}
+    </v-chip>
     <v-menu
       v-model="active_menu"
       :close-on-content-click="false"
@@ -63,7 +55,7 @@
           <v-chip
             slot-scope="{ hover }"
             :class="`elevation-${hover ? 5 : 2}`"
-            style="position: absolute; top: 10px; left: 10px"
+            style="position: absolute; top: 1%; left: 1%"
             v-ripple
             color="primary"
             text-color="white"
@@ -134,7 +126,9 @@
                   v-model="activeVisualizeMarkedState"
                   :color="activeVisualizeMarkedState ? 'secondary' : 'primary'"
                   value="false"
-                  @click="activeVisualizeMarkedState = !activeVisualizeMarkedState"
+                  @click="
+                    activeVisualizeMarkedState = !activeVisualizeMarkedState
+                  "
                   hide-details
                 >
                   <v-icon>mdi-chart-donut</v-icon>
@@ -159,20 +153,22 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 export default {
   name: "Canvas",
-  watch : {
-    activeVisualizeMarkedState(){
+  watch: {
+    activeVisualizeMarkedState() {
       this.hiddenCross.isMarked(this.visualizeMarkedState);
-    }
+    },
   },
   data() {
     return {
+      width: window.innerHeight,
+      height: window.innerHeight,
       lastCenter: null,
       lastDist: 0,
       stage: null,
       isRunning: false,
       active_menu: true,
       animationDuration: 1,
-      activeVisualizeMarkedState : true,
+      activeVisualizeMarkedState: true,
       statusOperation: "",
       statusText: "",
       hiddenCross: null,
@@ -225,6 +221,11 @@ export default {
     handleMouseDown() {
       const pointer = this.getRelativePointerPos();
       if (!this.configKonva.draggable) {
+        this.mCircleConfig.strokeWidth = 1 / this.stage.scaleX();
+        this.mCircleConfig.dash = [
+          4 / this.stage.scaleX(),
+          4 / this.stage.scaleX(),
+        ];
         this.mCircleConfig.visible = true;
         this.mCircleConfig.startX = pointer.x;
         this.mCircleConfig.startY = pointer.y;
@@ -260,11 +261,11 @@ export default {
           console.error(child);
           return;
         }
-        let thisOperation = "recall";
+        let thisOperation = "calling";
         if (other !== null) {
           //in case of recrossing delete also the other circle
           other.data.markedForDeletion = true;
-          thisOperation = "recrossing";
+          thisOperation = "crossing";
         }
 
         /*
@@ -291,7 +292,6 @@ export default {
           //Set text for current operation
           this.statusOperation = thisOperation;
         }, this.animationDelayBuffer);
-
         this.animationDelayBuffer += animationDuration * 1000;
       });
       this.animationDelayBuffer += 100;
@@ -301,6 +301,7 @@ export default {
         this.deleteItems();
         this.statusOperation = "";
         this.isRunning = false;
+        this.animationDelayBuffer = 0;
       }, this.animationDelayBuffer);
     },
 
@@ -325,10 +326,14 @@ export default {
       const dy = newCross.data.y - insideRef.data.y;
       const d = Math.sqrt(dx * dx + dy * dy);
 
+      //checking if collision happens because of strokewidth
+      const ncsw = newCross.data.strokeWidth / 2;
+      const irsw = insideRef.data.strokeWidth / 2;
+
       if (
         !(
-          d + newCross.data.radius < insideRef.data.radius ||
-          d > newCross.data.radius + insideRef.data.radius
+          d + newCross.data.radius+ncsw < insideRef.data.radius-irsw ||
+          d > newCross.data.radius+ncsw + insideRef.data.radius+irsw
         )
       ) {
         return;
@@ -340,10 +345,11 @@ export default {
         const dx = newCross.data.x - child.data.x;
         const dy = newCross.data.y - child.data.y;
         const d = Math.sqrt(dx * dx + dy * dy);
+        const csw = child.data.strokeWidth / 2;
 
-        if (d + child.data.radius < newCross.data.radius) {
+        if (d + child.data.radius+csw < newCross.data.radius-ncsw) {
           insideChilds.push(child);
-        } else if (d > child.data.radius + newCross.data.radius) {
+        } else if (d > child.data.radius+csw + newCross.data.radius+ncsw) {
           continue;
         } else {
           return false;
@@ -368,12 +374,12 @@ export default {
     },
 
     visualizeMarkedState(markRef, marked) {
-        if (marked && this.activeVisualizeMarkedState) {
-          const scale = this.stage.scaleX();
-          markRef.data.dash = [2 / scale, 2 / scale];
-        } else {
-          markRef.data.dash = null;
-        }
+      if (marked && this.activeVisualizeMarkedState) {
+        const newDashSize = 2 * markRef.data.strokeWidth;
+        markRef.data.dash = [newDashSize,newDashSize];
+      } else {
+        markRef.data.dash = null;
+      }
     },
 
     handleMouseMove() {
@@ -384,6 +390,9 @@ export default {
         this.mCircleConfig.x = this.mCircleConfig.startX + dx / 2;
         this.mCircleConfig.y = this.mCircleConfig.startY + dy / 2;
         this.mCircleConfig.radius = Math.sqrt(dx * dx + dy * dy) / 2;
+        this.mCircleConfig.strokeWidth = this.mCircleConfig.radius /50;
+        this.mCircleConfig.dash = [this.mCircleConfig.strokeWidth*4, 
+                                   4 / this.stage.scaleX()];
       } else {
         const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
         this.statusText =
@@ -452,8 +461,7 @@ export default {
 
         var scale = this.stage.scaleX() * (dist / this.lastDist);
 
-        this.stage.scaleX(scale);
-        this.stage.scaleY(scale);
+        this.stage.scale({ x: scale, y: scale });
 
         // calculate new position of the stage
         var dx = newCenter.x - this.lastCenter.x;
@@ -503,8 +511,42 @@ export default {
       };
       stage.position(newPos);
       stage.batchDraw();
-      this.mCircleConfig.strokeWidth = 1 / newScale;
-      this.mCircleConfig.dash = [4 / newScale, 4 / newScale];
+    },
+    handleResize() {
+      if (this.stage) {
+        /*The value of konfigKonva and dummyValue doesnt 
+        matter since we are scaling relativly
+        to the parent container*/
+        //get parent container
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+
+        // scale relativly to parent
+        let usedScale = this.width / 1000;
+
+        if (this.height != newHeight) {
+          this.height = newHeight;
+          usedScale = this.height / 1000;
+        }
+
+        if (this.width != newWidth) {
+          this.width = newWidth;
+          usedScale = this.width / 1000;
+        }
+
+        this.stage.width(this.width);
+        this.stage.height(this.height);
+        //dont use different scales for x and y or else everything will be eliptic
+        this.stage.scale({ x: usedScale, y: usedScale });
+        this.stage.draw();
+      }
+    },
+    handleOrientationChange() {
+      //switch innerheight and innerwidth with the handler, because inside
+      //resize event its somehow not properly detected :/
+      const tmp = window.innerHeight;
+      window.innerHeight = window.innerWidth;
+      window.innerWidth = tmp;
     },
   },
   mounted() {
@@ -515,7 +557,9 @@ export default {
     );
     this.vue = this.$refs;
     document.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("orientationchange", this.handleOrientationChange);
     this.stage = this.$refs.stage.getNode();
+    this.handleResize();
   },
 };
 </script>

@@ -20,7 +20,12 @@ export default class Node {
             for (let i = 0; i < this.childs.length; ++i) {
                 if (!this.childs[i].isMarked(visualizeMarkedStateFunc)) {
                     marked = true;
-                    break;
+                    if (!visualizeMarkedStateFunc)
+                    {
+                        //if visualization of marked state is active all childs
+                        //need to be updated (caching should be implemented later)
+                        break;
+                    }
                 }
             }
         }
@@ -28,7 +33,6 @@ export default class Node {
         {
             visualizeMarkedStateFunc(this,marked);
         }
-
         return marked;
     }
 
