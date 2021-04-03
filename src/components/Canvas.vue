@@ -221,14 +221,10 @@ export default {
       };
     },
     handleMouseDown() {
-      this.$emit("blur");
       const pointer = this.getRelativePointerPos();
       if (!this.configKonva.draggable) {
         this.mCircleConfig.strokeWidth = 1 / this.stage.scaleX();
-        this.mCircleConfig.dash = [
-          4 / this.stage.scaleX(),
-          4 / this.stage.scaleX(),
-        ];
+        this.mCircleConfig.dash = [1, 1];
         this.mCircleConfig.visible = true;
         this.mCircleConfig.startX = pointer.x;
         this.mCircleConfig.startY = pointer.y;
@@ -335,8 +331,8 @@ export default {
 
       if (
         !(
-          d + newCross.data.radius+ncsw < insideRef.data.radius-irsw ||
-          d > newCross.data.radius+ncsw + insideRef.data.radius+irsw
+          d + newCross.data.radius + ncsw < insideRef.data.radius - irsw ||
+          d > newCross.data.radius + ncsw + insideRef.data.radius + irsw
         )
       ) {
         return;
@@ -350,9 +346,9 @@ export default {
         const d = Math.sqrt(dx * dx + dy * dy);
         const csw = child.data.strokeWidth / 2;
 
-        if (d + child.data.radius+csw < newCross.data.radius-ncsw) {
+        if (d + child.data.radius + csw < newCross.data.radius - ncsw) {
           insideChilds.push(child);
-        } else if (d > child.data.radius+csw + newCross.data.radius+ncsw) {
+        } else if (d > child.data.radius + csw + newCross.data.radius + ncsw) {
           continue;
         } else {
           return false;
@@ -379,7 +375,7 @@ export default {
     visualizeMarkedState(markRef, marked) {
       if (marked && this.activeVisualizeMarkedState) {
         const newDashSize = 2 * markRef.data.strokeWidth;
-        markRef.data.dash = [newDashSize,newDashSize];
+        markRef.data.dash = [newDashSize, newDashSize];
       } else {
         markRef.data.dash = null;
       }
@@ -393,9 +389,11 @@ export default {
         this.mCircleConfig.x = this.mCircleConfig.startX + dx / 2;
         this.mCircleConfig.y = this.mCircleConfig.startY + dy / 2;
         this.mCircleConfig.radius = Math.sqrt(dx * dx + dy * dy) / 2;
-        this.mCircleConfig.strokeWidth = this.mCircleConfig.radius /50;
-        this.mCircleConfig.dash = [this.mCircleConfig.strokeWidth*4, 
-                                   4 / this.stage.scaleX()];
+        this.mCircleConfig.strokeWidth = this.mCircleConfig.radius / 50;
+        this.mCircleConfig.dash = [
+          this.mCircleConfig.strokeWidth * 4,
+          4 / this.stage.scaleX(),
+        ];
       } else {
         const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
         this.statusText =
@@ -486,6 +484,9 @@ export default {
     },
     handleTouchStart(e) {
       e.evt.preventDefault();
+      //normal blur event doesnt occur if touch is used
+      //thus send it here, to close the second menu automatically if its opened
+      this.$emit("blur"); 
       this.lastDist = 0;
       this.lastCenter = null;
       this.handleMouseDown();
