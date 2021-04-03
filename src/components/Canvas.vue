@@ -24,6 +24,7 @@
             stroke: 'black',
             strokeWidth: item.data.strokeWidth,
             visible: item.data.visible,
+            dash: item.data.dash,
           }"
         ></v-circle>
         <v-circle ref="mCircle" :config="mCircleConfig" />
@@ -54,7 +55,7 @@
       v-model="active_menu"
       :close-on-content-click="false"
       :close-on-click="false"
-      :nudge-width="150"
+      :nudge-width="170"
       offset-y
     >
       <template v-slot:activator="{ on }">
@@ -129,6 +130,15 @@
                 >
                   <v-icon>mdi-cursor-pointer</v-icon>Move
                 </v-btn>
+                <v-btn
+                  v-model="activeVisualizeMarkedState"
+                  :color="activeVisualizeMarkedState ? 'secondary' : 'primary'"
+                  value="false"
+                  @click="activeVisualizeMarkedState = !activeVisualizeMarkedState"
+                  hide-details
+                >
+                  <v-icon>mdi-chart-donut</v-icon>
+                </v-btn>
               </v-card-actions>
             </v-col>
           </v-row>
@@ -149,12 +159,20 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 export default {
   name: "Canvas",
+  watch : {
+    activeVisualizeMarkedState(){
+      this.hiddenCross.isMarked(this.visualizeMarkedState);
+    }
+  },
   data() {
     return {
+      lastCenter: null,
+      lastDist: 0,
       stage: null,
       isRunning: false,
       active_menu: true,
       animationDuration: 1,
+      activeVisualizeMarkedState : true,
       statusOperation: "",
       statusText: "",
       hiddenCross: null,
@@ -192,6 +210,7 @@ export default {
         visible: true,
         markedForDeletion: false,
         nativeStrokeWidth: strokeWidth,
+        dash: null,
       };
       return newCircle;
     },
@@ -349,10 +368,12 @@ export default {
     },
 
     visualizeMarkedState(markRef, marked) {
-      markRef.data.strokeWidth = markRef.data.nativeStrokeWidth;
-      if (marked) {
-        markRef.data.strokeWidth *= 2;
-      }
+        if (marked && this.activeVisualizeMarkedState) {
+          const scale = this.stage.scaleX();
+          markRef.data.dash = [2 / scale, 2 / scale];
+        } else {
+          markRef.data.dash = null;
+        }
     },
 
     handleMouseMove() {
@@ -383,10 +404,79 @@ export default {
 
     handleTouchMove(e) {
       e.evt.preventDefault();
-      this.handleMouseMove();
+
+      const getDistance = (p1, p2) => {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+      };
+      const getCenter = (p1, p2) => {
+        return {
+          x: (p1.x + p2.x) / 2,
+          y: (p1.y + p2.y) / 2,
+        };
+      };
+      const touch1 = e.evt.touches[0];
+      const touch2 = e.evt.touches[1];
+
+      if (touch1 && touch2) {
+        // if the stage was under Konva's drag&drop
+        // we need to stop it, and implement our own pan logic with two pointers
+        if (this.stage.isDragging()) {
+          this.stage.stopDrag();
+        }
+
+        const p1 = {
+          x: touch1.clientX,
+          y: touch1.clientY,
+        };
+        const p2 = {
+          x: touch2.clientX,
+          y: touch2.clientY,
+        };
+
+        if (!this.lastCenter) {
+          this.lastCenter = getCenter(p1, p2);
+          return;
+        }
+        var newCenter = getCenter(p1, p2);
+
+        var dist = getDistance(p1, p2);
+
+        if (!this.lastDist) {
+          this.lastDist = dist;
+        }
+        // local coordinates of center point
+        var pointTo = {
+          x: (newCenter.x - this.stage.x()) / this.stage.scaleX(),
+          y: (newCenter.y - this.stage.y()) / this.stage.scaleX(),
+        };
+
+        var scale = this.stage.scaleX() * (dist / this.lastDist);
+
+        this.stage.scaleX(scale);
+        this.stage.scaleY(scale);
+
+        // calculate new position of the stage
+        var dx = newCenter.x - this.lastCenter.x;
+        var dy = newCenter.y - this.lastCenter.y;
+
+        var newPos = {
+          x: newCenter.x - pointTo.x * scale + dx,
+          y: newCenter.y - pointTo.y * scale + dy,
+        };
+
+        this.stage.position(newPos);
+        this.stage.batchDraw();
+
+        this.lastDist = dist;
+        this.lastCenter = newCenter;
+      } else {
+        this.handleMouseMove();
+      }
     },
     handleTouchStart(e) {
       e.evt.preventDefault();
+      this.lastDist = 0;
+      this.lastCenter = null;
       this.handleMouseDown();
     },
     handleTouchEnd() {
@@ -413,7 +503,6 @@ export default {
       };
       stage.position(newPos);
       stage.batchDraw();
-      console.log(newScale);
       this.mCircleConfig.strokeWidth = 1 / newScale;
       this.mCircleConfig.dash = [4 / newScale, 4 / newScale];
     },
@@ -427,7 +516,6 @@ export default {
     this.vue = this.$refs;
     document.addEventListener("scroll", this.handleScroll);
     this.stage = this.$refs.stage.getNode();
-    console.log(this.stage);
   },
 };
 </script>
