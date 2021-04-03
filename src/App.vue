@@ -1,10 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <Canvas />
+      <Canvas v-on:mouseDown="closeMenu2"/>
     </v-main>
-    <Menu2 @explainWhy="explainingWhy = true" />
 
+    <Menu2 ref="refMenu2" @explainWhy="explainingWhy = true" />
     <v-dialog v-model="explainingWhy" fullscreen>
       <ExplanationWhy @windowClosed="explainingWhy = false" />
     </v-dialog>
@@ -25,9 +25,12 @@ export default {
     ExplanationWhy
   },
   methods : {
+    closeMenu2() {
+      this.$refs.refMenu2.closeMenu();
+    }
   },
   data: () => ({
-    explainingWhy: false
+    explainingWhy: false,
   }),
 };
 </script>

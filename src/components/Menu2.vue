@@ -1,5 +1,5 @@
 <template>
-  <v-menu left bottom>
+  <v-menu :value="openMenu"  left bottom>
     <template v-slot:activator="{ on, attrs }">
       <v-btn small absolute top right color="primary" v-bind="attrs" v-on="on">
         <v-icon>mdi-dots-vertical</v-icon>
@@ -44,7 +44,16 @@
 <script>
 export default {
   name: "Menu2",
-  methods : {
+  methods: {
+    closeMenu() {
+      this.openMenu = false;
+      console.log("menu closed");
+    }
+  },
+  data : () => {
+    return {
+      openMenu : false
+    }
   }
 };
 </script>

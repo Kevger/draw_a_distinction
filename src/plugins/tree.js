@@ -7,50 +7,29 @@ export default class Node {
         this.depth = depth;
     }
 
-    lawOfCalling() {
-        //To recall is to call.
-        for (let i = 0; i < this.childs.length; ++i) {
-            if (this.childs[i].isMarked) {
-                return false;
-            }
-        }
-        return true;
-    }
 
-    lawOfCrossing() {
-        // To recross is not to cross
-        if (this.childs[0].childs.length == 0) {
-            return true;
-        }
-        else {
-            return !this.childs.isMarked;
-        }
-    }
-
-    get isMarked() {
+    isMarked(visualizeMarkedStateFunc = null) {
         let marked = false;
         if (this.childs.length == 0) {
             marked = false;
         }
         else if (this.childs.length == 1) {
-            marked = !this.childs[0].isMarked;
+            marked = !this.childs[0].isMarked(visualizeMarkedStateFunc);
         }
         else {
             for (let i = 0; i < this.childs.length; ++i) {
-                if (!this.childs[i].isMarked) {
+                if (!this.childs[i].isMarked(visualizeMarkedStateFunc)) {
                     marked = true;
                     break;
                 }
             }
         }
-        if (marked) {
-            this.data.strokeWidth = 2;
+        if(visualizeMarkedStateFunc)
+        {
+            visualizeMarkedStateFunc(this,marked);
         }
-        else {
-            this.data.strokeWidth = 1;
-        }
-        return marked;
 
+        return marked;
     }
 
     refresh(parent, index = 0) {
@@ -150,11 +129,5 @@ export default class Node {
             }
         }
         return insideRef;
-    }
-    resize(dX, dY, scaleR) {
-        this.data.x += dX;
-        this.data.y += dY;
-        this.data.radius *= scaleR;
-        this.childs.forEach(c => c.resize(dX, dY, scaleR));
     }
 }

@@ -1,4 +1,8 @@
 .DS_Store
+.github
+.firebaserc
+.firebase
+firebase.json
 node_modules
 /dist
 
@@ -21,3 +25,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+

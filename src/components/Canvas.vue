@@ -9,6 +9,7 @@
       @touchstart="handleTouchStart"
       @touchend="handleTouchEnd"
       @touchmove="handleTouchMove"
+      @wheel="handleScroll"
     >
       <v-layer>
         <v-circle
@@ -28,26 +29,118 @@
         <v-circle ref="mCircle" :config="mCircleConfig" />
       </v-layer>
     </v-stage>
+
     <v-card
-      left
-      color="rgb(0,0,0,0.4)"
-      style="padding: 1%; position: absolute; left: 1%; bottom: 1%"
+      color="primary"
+      style="padding: 0.3%; position: absolute; left: 1%; bottom: 1%"
+      text-color="white"
     >
-      <div style="white-space: wrap; color: white">
-        {{ statusText }}
+      <div style="white-space: nowrap; color: white">
+        {{ " " + statusText + " " }}
       </div>
     </v-card>
+
     <v-card
-      left
-      color="rgb(0,0,0,0.4)"
-      style="padding: 0%; position: absolute; right: 1%; bottom: 1%"
+      color="primary"
+      style="padding: 0.3%; position: absolute; right: 1%; bottom: 1%"
+      text-color="white"
     >
       <div style="white-space: nowrap; color: white">
         {{ statusOperation }}
       </div>
     </v-card>
+
+    <v-menu
+      v-model="active_menu"
+      :close-on-content-click="false"
+      :close-on-click="false"
+      :nudge-width="150"
+      offset-y
+    >
+      <template v-slot:activator="{ on }">
+        <v-hover>
+          <v-chip
+            slot-scope="{ hover }"
+            :class="`elevation-${hover ? 5 : 2}`"
+            style="position: absolute; top: 10px; left: 10px"
+            v-ripple
+            color="primary"
+            text-color="white"
+            v-on="on"
+          >
+            <v-avatar> <v-icon>mdi-cog</v-icon> </v-avatar>
+            Controls
+          </v-chip>
+        </v-hover>
+      </template>
+
+      <v-card dark color="rgb(0,0,0,0.5)">
+        <v-card-title
+          style="
+            padding-left: 2%;
+            padding-right: 2%;
+            padding-bottom: 1%;
+            padding-top: 4%;
+          "
+          >Laws of Form</v-card-title
+        >
+        <v-card-subtitle
+          style="
+            padding-left: 2%;
+            padding-right: 2%;
+            padding-bottom: 1%;
+            padding-top: 4%;
+          "
+          >Draw a distinction!</v-card-subtitle
+        >
+        <v-container
+          style="padding-left: 2%; padding-right: 2%; padding-top: 0%"
+          fluid
+        >
+          <v-row no-gutters>
+            <v-col>
+              <v-slider
+                v-model="animationDuration"
+                min="0"
+                max="5"
+                step="0.2"
+                label="Speed"
+                append-icon="mdi-metronome"
+              ></v-slider>
+            </v-col>
+          </v-row>
+
+          <v-row no-gutters>
+            <v-col>
+              <v-card-actions>
+                <v-btn
+                  v-model="isRunning"
+                  :color="isRunning ? 'secondary' : 'primary'"
+                  @click="startCollapse"
+                >
+                  <v-icon>mdi-play</v-icon>run
+                </v-btn>
+                <v-btn
+                  v-model="configKonva.draggable"
+                  :color="configKonva.draggable ? 'secondary' : 'primary'"
+                  value="false"
+                  @click="configKonva.draggable = !configKonva.draggable"
+                  hide-details
+                >
+                  <v-icon>mdi-cursor-pointer</v-icon>Move
+                </v-btn>
+              </v-card-actions>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-menu>
   </div>
 </template>
+
+
+
+
 
 <script>
 import Node from "../plugins/tree";
@@ -56,30 +149,80 @@ const width = window.innerWidth;
 const height = window.innerHeight;
 export default {
   name: "Canvas",
+  data() {
+    return {
+      stage: null,
+      isRunning: false,
+      active_menu: true,
+      animationDuration: 1,
+      statusOperation: "",
+      statusText: "",
+      hiddenCross: null,
+      list: [],
+      idCnt: 0,
+      configKonva: {
+        width: width,
+        height: height,
+        draggable: false,
+      },
+      mCircleConfig: {
+        startX: 0,
+        startY: 0,
+        x: 0,
+        y: 0,
+        radius: 0,
+        stroke: "black",
+        strokeWidth: 1,
+        listening: false,
+        visible: false,
+        dash: [4, 4],
+      },
+      animationDelayBuffer: 0,
+      vue: null,
+    };
+  },
   methods: {
-    createCircle(x, y, r) {
+    createCircle(x, y, r, strokeWidth = 1) {
       const newCircle = {
         x: x,
         y: y,
         radius: r,
-        strokeWidth: 1,
+        strokeWidth: strokeWidth,
         id: this.idCnt++,
         visible: true,
         markedForDeletion: false,
+        nativeStrokeWidth: strokeWidth,
       };
       return newCircle;
     },
-    handleMouseDown(e) {
-      this.mCircleConfig.visible = true;
-      this.mCircleConfig.startX = e.evt.layerX;
-      this.mCircleConfig.startY = e.evt.layerY;
-      this.mCircleConfig.x = this.mCircleConfig.startX;
-      this.mCircleConfig.y = this.mCircleConfig.startY;
-      this.mCircleConfig.radius = 0;
+    getRelativePointerPos() {
+      const scale = this.stage.scaleX();
+      const pointer = this.stage.getPointerPosition();
+      return {
+        x: (pointer.x - this.stage.x()) / scale,
+        y: (pointer.y - this.stage.y()) / scale,
+      };
+    },
+    handleMouseDown() {
+      const pointer = this.getRelativePointerPos();
+      if (!this.configKonva.draggable) {
+        this.mCircleConfig.visible = true;
+        this.mCircleConfig.startX = pointer.x;
+        this.mCircleConfig.startY = pointer.y;
+        this.mCircleConfig.x = this.mCircleConfig.startX;
+        this.mCircleConfig.y = this.mCircleConfig.startY;
+        this.mCircleConfig.radius = 0;
+      }
+      const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
+      this.statusText =
+        insideRef.name +
+        " is " +
+        (insideRef.isMarked() ? "marked" : "unmarked");
     },
 
     startCollapse() {
       //callback for drawing
+      this.isRunning = true;
       this.hiddenCross.markCollapse((child, endstate, other) => {
         //get reference to circle which has to be moved
         let ref = null;
@@ -110,7 +253,7 @@ export default {
         every time this function is called a
         animationduration is added
         */
-        const animationDuration = 1;
+        const animationDuration = this.animationDuration;
 
         setTimeout(() => {
           //start animation
@@ -138,6 +281,7 @@ export default {
       setTimeout(() => {
         this.deleteItems();
         this.statusOperation = "";
+        this.isRunning = false;
       }, this.animationDelayBuffer);
     },
 
@@ -145,7 +289,8 @@ export default {
       const newCircle = this.createCircle(
         this.mCircleConfig.x,
         this.mCircleConfig.y,
-        this.mCircleConfig.radius
+        this.mCircleConfig.radius,
+        this.mCircleConfig.strokeWidth
       );
       const insideRef = this.hiddenCross.isIn(
         newCircle.x,
@@ -191,33 +336,39 @@ export default {
       );
       insideRef.childs = notFiltered;
       insideRef.childs.push(newCross);
-      this.hiddenCross.refresh(null);
-      this.hiddenCross.isMarked;
       this.list.push(newCross);
     },
     handleMouseUp() {
       this.animationDelayBuffer = 0;
       this.mCircleConfig.visible = false;
-      if (this.mCircleConfig.radius <= 1) {
-        this.startCollapse();
-      } else {
+      if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
         this.createMark();
+      }
+      this.hiddenCross.refresh(null);
+      this.hiddenCross.isMarked(this.visualizeMarkedState);
+    },
+
+    visualizeMarkedState(markRef, marked) {
+      markRef.data.strokeWidth = markRef.data.nativeStrokeWidth;
+      if (marked) {
+        markRef.data.strokeWidth *= 2;
       }
     },
 
-    handleMouseMove(e) {
+    handleMouseMove() {
+      const pointer = this.getRelativePointerPos();
       if (this.mCircleConfig.visible) {
-        const dx = e.evt.layerX - this.mCircleConfig.startX;
-        const dy = e.evt.layerY - this.mCircleConfig.startY;
+        const dx = pointer.x - this.mCircleConfig.startX;
+        const dy = pointer.y - this.mCircleConfig.startY;
         this.mCircleConfig.x = this.mCircleConfig.startX + dx / 2;
         this.mCircleConfig.y = this.mCircleConfig.startY + dy / 2;
         this.mCircleConfig.radius = Math.sqrt(dx * dx + dy * dy) / 2;
       } else {
-        const insideRef = this.hiddenCross.isIn(e.evt.layerX, e.evt.layerY, 0);
+        const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
         this.statusText =
           insideRef.name +
           " is " +
-          (insideRef.isMarked ? "marked" : "unmarked");
+          (insideRef.isMarked(null) ? "marked" : "unmarked");
       }
     },
 
@@ -232,48 +383,40 @@ export default {
 
     handleTouchMove(e) {
       e.evt.preventDefault();
-
-      e.evt.layerX = e.evt.touches[0].clientX;
-      e.evt.layerY = e.evt.touches[0].clientY;
-      this.handleMouseMove(e);
+      this.handleMouseMove();
     },
     handleTouchStart(e) {
       e.evt.preventDefault();
-
-      e.evt.layerX = e.evt.touches[0].clientX;
-      e.evt.layerY = e.evt.touches[0].clientY;
-      this.handleMouseDown(e);
+      this.handleMouseDown();
     },
     handleTouchEnd() {
       this.handleMouseUp();
     },
-  },
-  data() {
-    return {
-      statusOperation: "",
-      statusText: "",
-      hiddenCross: null,
-      list: [],
-      idCnt: 0,
-      configKonva: {
-        width: width,
-        height: height,
-      },
-      mCircleConfig: {
-        startX: 0,
-        startY: 0,
-        x: 0,
-        y: 0,
-        radius: 0,
-        stroke: "black",
-        strokeWidth: 1,
-        listening: false,
-        visible: false,
-        dash: [4, 4],
-      },
-      animationDelayBuffer: 0,
-      vue: null,
-    };
+    handleScroll(e) {
+      const scaleBy = 1.01;
+
+      const stage = this.$refs.stage.getNode();
+      const oldScale = stage.scaleX();
+      const pointer = stage.getPointerPosition();
+
+      var mousePointTo = {
+        x: (pointer.x - stage.x()) / oldScale,
+        y: (pointer.y - stage.y()) / oldScale,
+      };
+      var newScale = e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+      stage.scale({ x: newScale, y: newScale });
+
+      var newPos = {
+        x: pointer.x - mousePointTo.x * newScale,
+        y: pointer.y - mousePointTo.y * newScale,
+      };
+      stage.position(newPos);
+      stage.batchDraw();
+      console.log(newScale);
+      this.mCircleConfig.strokeWidth = 1 / newScale;
+      this.mCircleConfig.dash = [4 / newScale, 4 / newScale];
+    },
   },
   mounted() {
     this.hiddenCross = new Node(
@@ -282,6 +425,9 @@ export default {
       0
     );
     this.vue = this.$refs;
+    document.addEventListener("scroll", this.handleScroll);
+    this.stage = this.$refs.stage.getNode();
+    console.log(this.stage);
   },
 };
 </script>
