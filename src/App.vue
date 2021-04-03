@@ -1,8 +1,8 @@
 <template>
   <v-app>
     <v-main>
-      <Canvas v-on:mouseDown="closeMenu2" />
-      <Menu2 ref="refMenu2" @explainWhy="explainingWhy = true" />
+      <Canvas @blur="closeMenu2" v-on:mouseDown="closeMenu2" />
+      <MenuProjects ref="menuProjects" @explainWhy="explainingWhy = true" />
       <v-dialog v-if="explainingWhy" v-model="explainingWhy" fullscreen>
         <ExplanationWhy @windowClosed="explainingWhy = false" />
       </v-dialog>
@@ -12,7 +12,7 @@
 
 <script>
 import Canvas from "./components/Canvas";
-import Menu2 from "./components/Menu2";
+import MenuProjects from "./components/MenuProjects";
 import ExplanationWhy from "./components/ExplanationWhy";
 
 export default {
@@ -20,12 +20,12 @@ export default {
 
   components: {
     Canvas,
-    Menu2,
+    MenuProjects,
     ExplanationWhy,
   },
   methods: {
     closeMenu2() {
-      this.$refs.refMenu2.closeMenu();
+      this.$refs.menuProjects.closeMenu();
     },
   },
   data: () => ({

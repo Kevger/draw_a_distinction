@@ -30,6 +30,7 @@
         <v-circle ref="mCircle" :config="mCircleConfig" />
       </v-layer>
     </v-stage>
+
     <v-chip
       color="primary"
       style="position: absolute; left: 1%; bottom: 1%"
@@ -43,6 +44,7 @@
       }}</v-icon>
       {{ isRunning ? statusOperation : statusText }}
     </v-chip>
+
     <v-menu
       v-model="active_menu"
       :close-on-content-click="false"
@@ -97,7 +99,7 @@
                 min="0"
                 max="5"
                 step="0.2"
-                label="Speed"
+                label="Delay"
                 append-icon="mdi-metronome"
               ></v-slider>
             </v-col>
@@ -131,7 +133,7 @@
                   "
                   hide-details
                 >
-                  <v-icon>mdi-chart-donut</v-icon>
+                  <v-icon>mdi-chart-donut</v-icon>Show
                 </v-btn>
               </v-card-actions>
             </v-col>
@@ -219,6 +221,7 @@ export default {
       };
     },
     handleMouseDown() {
+      this.$emit("blur");
       const pointer = this.getRelativePointerPos();
       if (!this.configKonva.draggable) {
         this.mCircleConfig.strokeWidth = 1 / this.stage.scaleX();

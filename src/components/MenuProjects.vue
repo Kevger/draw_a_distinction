@@ -1,5 +1,5 @@
 <template>
-  <v-menu :value="openMenu" left bottom>
+  <v-menu ref="refMenuProjects" left bottom>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         style="position: absolute; top: 1%; right: 1%"
@@ -42,16 +42,14 @@
 
 <script>
 export default {
-  name: "Menu2",
+  name: "MenuProjects",
   methods: {
     closeMenu() {
-      this.openMenu = false;
-      console.log("menu closed");
+      this.$refs.refMenuProjects.isActive = false;
     },
   },
   data: () => {
     return {
-      openMenu: false,
     };
   },
 };
