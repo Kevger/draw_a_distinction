@@ -1,6 +1,6 @@
 # Laws of Form Simulator
 
-[# Live Demo - Draw a distinction!](https://lawsofform.web.app/ "Draw a distinction!")
+[Live Demo - Draw a distinction!](https://lawsofform.web.app/ "Draw a distinction!")
 
 ## About
 
