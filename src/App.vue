@@ -29,7 +29,7 @@ export default {
     },
   },
   data: () => ({
-    explainingWhy: false,
+    explainingWhy: true,
   }),
 };
 </script>

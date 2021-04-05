@@ -26,30 +26,36 @@
             visible: item.data.visible,
             dash: item.data.dash,
           }"
-        ></v-circle>
+        />
+        <v-text
+          v-for="item in variablesList"
+          ref="variables"
+          :key="item.data.id"
+          :config="{
+            x: item.data.x - item.data.radius,
+            y: item.data.y - item.data.radius,
+            text: item.data.text,
+            fontSize: item.data.fontSize,
+            width: item.data.width,
+            height: item.data.height,
+            visible: item.data.visible,
+            align: item.data.align,
+            verticalAlign: item.data.verticalAlign,
+            strokeWidth: item.data.strokeWidth,
+            id: item.data.id,
+            opacity: item.data.opacity,
+          }"
+        />
         <v-circle ref="mCircle" :config="mCircleConfig" />
+        <v-text ref="mText" :config="mTextConfig" />
       </v-layer>
     </v-stage>
-
-    <v-chip
-      color="primary"
-      style="position: absolute; left: 1%; bottom: 1%"
-      text-color="white"
-      :class="`elevation-2`"
-    >
-      <v-icon v-if="isRunning">{{
-        statusOperation == "crossing"
-          ? "mdi-circle-double"
-          : "mdi-circle-multiple-outline"
-      }}</v-icon>
-      {{ isRunning ? statusOperation : statusText }}
-    </v-chip>
 
     <v-menu
       v-model="active_menu"
       :close-on-content-click="false"
       :close-on-click="false"
-      :nudge-width="170"
+      :nudge-width="145"
       offset-y
     >
       <template v-slot:activator="{ on }">
@@ -75,7 +81,7 @@
             padding-left: 2%;
             padding-right: 2%;
             padding-bottom: 1%;
-            padding-top: 4%;
+            padding-top: 2%;
           "
           >Laws of Form</v-card-title
         >
@@ -84,7 +90,7 @@
             padding-left: 2%;
             padding-right: 2%;
             padding-bottom: 1%;
-            padding-top: 4%;
+            padding-top: 3%;
           "
           >Draw a distinction!</v-card-subtitle
         >
@@ -98,47 +104,148 @@
                 v-model="animationDuration"
                 min="0"
                 max="5"
+                thumb-label
+                thumb-color="light-grey"
+                hide-details
                 step="0.2"
                 label="Delay"
                 append-icon="mdi-metronome"
+                :disabled="isRunning"
               ></v-slider>
             </v-col>
           </v-row>
-
-          <v-row no-gutters>
-            <v-col>
-              <v-card-actions>
-                <v-btn
-                  v-model="isRunning"
-                  :color="isRunning ? 'secondary' : 'primary'"
-                  @click="startCollapse"
-                >
-                  <v-icon>mdi-play</v-icon>run
-                </v-btn>
-                <v-btn
-                  v-model="configKonva.draggable"
-                  :color="configKonva.draggable ? 'secondary' : 'primary'"
-                  value="false"
-                  @click="configKonva.draggable = !configKonva.draggable"
-                  hide-details
-                >
-                  <v-icon>mdi-cursor-pointer</v-icon>Move
-                </v-btn>
-                <v-btn
-                  v-model="activeVisualizeMarkedState"
-                  :color="activeVisualizeMarkedState ? 'secondary' : 'primary'"
-                  value="false"
-                  @click="
-                    activeVisualizeMarkedState = !activeVisualizeMarkedState
-                  "
-                  hide-details
-                >
-                  <v-icon>mdi-chart-donut</v-icon>Show
-                </v-btn>
-              </v-card-actions>
-            </v-col>
+          <v-row no-gutters style="margin-top: 3%">
+            <v-card-actions class="ma-0 pa-0">
+              <v-btn
+                v-model="isRunning"
+                :color="isRunning ? 'secondary' : 'primary'"
+                @click="startCollapse"
+                tile
+              >
+                <v-icon>mdi-play</v-icon>run
+              </v-btn>
+              <v-btn
+                v-model="configKonva.draggable"
+                :color="configKonva.draggable ? 'secondary' : 'primary'"
+                value="false"
+                @click="configKonva.draggable = !configKonva.draggable"
+                hide-details
+                tile
+              >
+                <v-icon small>mdi-cursor-pointer</v-icon>Move
+              </v-btn>
+              <v-btn
+                v-model="activeVisualizeMarkedState"
+                :color="activeVisualizeMarkedState ? 'secondary' : 'primary'"
+                value="false"
+                @click="
+                  activeVisualizeMarkedState = !activeVisualizeMarkedState
+                "
+                hide-details
+                :disabled="isRunning"
+                tile
+                style="font-size: 76%;"
+              >
+                <v-icon small>mdi-chart-donut</v-icon>Show
+              </v-btn>
+            </v-card-actions>
+          </v-row>
+          <v-row no-gutters style="margin-top: 3%">
+            <v-card-actions class="ma-0 pa-0">
+              <v-btn
+              tile
+                v-for="item in this.variables"
+                :key="item.name"
+                :color="
+                  activeVariableCreation == item.name ? 'secondary' : 'primary'
+                "
+                @click="
+                  activeVariableCreation =
+                    activeVariableCreation != item.name ? item.name : null
+                "
+              >
+                {{ item.name }}
+                <v-switch
+                  @click="variablesChanged = !variablesChanged"
+                  v-model="item.value"
+                />
+              </v-btn>
+            </v-card-actions>
           </v-row>
         </v-container>
+      </v-card>
+    </v-menu>
+    <v-chip
+      color="primary"
+      style="
+        position: absolute;
+        left: 1%;
+        bottom: 1%;
+        padding-left: 1%;
+        padding-right: 1%;
+        padding-bottom: 0.5%;
+        padding-top: 0.5%;
+      "
+      text-color="white"
+      label
+      :class="`elevation-2`"
+    >
+      <v-icon v-if="isRunning">{{
+        statusOperation == "crossing"
+          ? "mdi-circle-double"
+          : "mdi-circle-multiple-outline"
+      }}</v-icon>
+      {{ isRunning ? statusOperation : statusText }}
+    </v-chip>
+
+    <v-menu
+      v-model="active_logic_table"
+      :close-on-content-click="true"
+      :close-on-click="false"
+      :nudge-width="155"
+      :offset-y="true"
+      top
+    >
+      <template v-slot:activator="{ on }">
+        <v-hover>
+          <v-btn
+            small
+            @click="openLogicTable"
+            color="primary"
+            style="position: absolute; bottom: 1%; right: 1%"
+            v-on="on"
+          >
+            <v-icon> mdi-gate-xor</v-icon>
+          </v-btn>
+        </v-hover>
+      </template>
+      <v-card
+        color="rgb(0,0,0,0.5)"
+        style="
+          padding-left: 0%;
+          padding-right: 0%;
+          padding-bottom: 0%;
+          padding-top: 0%;
+        "
+      >
+        <v-card-title>Logic table</v-card-title>
+        <v-card-subtitle small>Logics of LoF</v-card-subtitle>
+        <v-data-table
+          style="
+            padding-left: 0%;
+            padding-right: 0%;
+            padding-bottom: 0%;
+            padding-top: 0%;
+          "
+          dense
+          color="primary"
+          :headers="this.logicTable.headers"
+          :items="this.logicTable.states"
+          hide-default-footer
+          item-key="name"
+          class="elevation-5"
+        >
+        </v-data-table>
       </v-card>
     </v-menu>
   </div>
@@ -149,7 +256,7 @@
 
 
 <script>
-import Node from "../plugins/tree";
+import Node, { Variable } from "../plugins/tree";
 
 const width = window.innerWidth;
 const height = window.innerHeight;
@@ -157,30 +264,35 @@ export default {
   name: "Canvas",
   watch: {
     activeVisualizeMarkedState() {
-      this.hiddenCross.isMarked(this.visualizeMarkedState);
+      this.unwrittenCross.isMarked(this.visualizeMarkedState);
+    },
+
+    variablesChanged() {
+      this.updateVariables();
+      this.unwrittenCross.isMarked(this.visualizeMarkedState);
     },
   },
   data() {
     return {
-      width: window.innerHeight,
-      height: window.innerHeight,
-      lastCenter: null,
-      lastDist: 0,
-      stage: null,
-      isRunning: false,
-      active_menu: true,
-      animationDuration: 1,
-      activeVisualizeMarkedState: true,
       statusOperation: "",
       statusText: "",
-      hiddenCross: null,
+      activeVariableCreation: null,
+      unwrittenCross: null,
       list: [],
+      variablesList: [],
+      variables: [
+        { name: "X", value: false, active: 0 },
+        { name: "Y", value: false, active: 0 },
+        { name: "Z", value: false, active: 0 },
+      ],
+      variablesChanged: false,
       idCnt: 0,
-      configKonva: {
-        width: width,
-        height: height,
-        draggable: false,
-      },
+      vidCnt: 10000000, // so that idCnt (marks) and vidCnt will not have the same values
+      activeVisualizeMarkedState: true,
+      active_menu: true,
+      isRunning: false,
+      active_logic_table: false,
+      logicTable: {},
       mCircleConfig: {
         startX: 0,
         startY: 0,
@@ -193,11 +305,62 @@ export default {
         visible: false,
         dash: [4, 4],
       },
+      mTextConfig: {
+        startX: 0,
+        startY: 0,
+        x: 0,
+        y: 0,
+        text: "",
+        strokeWidth: 1,
+        visible: false,
+        align: "center",
+        verticalAlign: "middle",
+        width: 20,
+        height: 20,
+
+        fontSize: 1,
+      },
+      configKonva: {
+        width: width,
+        height: height,
+        draggable: false,
+      },
+      animationDuration: 1,
       animationDelayBuffer: 0,
+      width: window.innerHeight,
+      height: window.innerHeight,
       vue: null,
+      stage: null,
+      touchLastCenter: null,
+      touchLastDist: 0,
+      blockOtherMessages: false,
     };
   },
   methods: {
+    openLogicTable() {
+      this.calculateLogicTable();
+      console.log(this.logicTable);
+    },
+    createVariable(x, y, text, fontSize, width, height, radius, strokeWidth) {
+      const newVariable = {
+        x: x,
+        y: y,
+        text: text,
+        fontSize: fontSize,
+        width: width,
+        height: height,
+        visible: true,
+        align: "center",
+        verticalAlign: "middle",
+        strokeWidth: strokeWidth,
+        id: this.vidCnt++,
+        radius: radius,
+        dash: [2, 2],
+        markedForDeletion: false,
+        opacity: 0,
+      };
+      return newVariable;
+    },
     createCircle(x, y, r, strokeWidth = 1) {
       const newCircle = {
         x: x,
@@ -223,6 +386,7 @@ export default {
     handleMouseDown() {
       const pointer = this.getRelativePointerPos();
       if (!this.configKonva.draggable) {
+        // dash and strokewidth are dummy values because mouesmove will change them dynamically
         this.mCircleConfig.strokeWidth = 1 / this.stage.scaleX();
         this.mCircleConfig.dash = [1, 1];
         this.mCircleConfig.visible = true;
@@ -231,8 +395,18 @@ export default {
         this.mCircleConfig.x = this.mCircleConfig.startX;
         this.mCircleConfig.y = this.mCircleConfig.startY;
         this.mCircleConfig.radius = 0;
+        if (this.activeVariableCreation) {
+          this.mTextConfig.visible = true;
+          this.mTextConfig.text = this.activeVariableCreation;
+          this.mTextConfig.startX = this.mCircleConfig.startX;
+          this.mTextConfig.startY = this.mCircleConfig.startY;
+          this.mTextConfig.x = this.mCircleConfig.x;
+          this.mTextConfig.y = this.mCircleConfig.y;
+          this.mTextConfig.fontSize = this.mCircleConfig.radius;
+        }
       }
-      const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
+      //reference of cross u clicked into (the unwritten cross extends indefinetly)
+      const insideRef = this.unwrittenCross.isIn(pointer.x, pointer.y, 0);
       this.statusText =
         insideRef.name +
         " is " +
@@ -242,19 +416,36 @@ export default {
     startCollapse() {
       //callback for drawing
       this.isRunning = true;
-      this.hiddenCross.markCollapse((child, endstate, other) => {
+      this.unwrittenCross.markCollapse((child, endstate, other) => {
         //get reference to circle which has to be moved
         let ref = null;
-        for (let i = 0; i < this.vue.circles.length; ++i) {
-          const tmpRef = this.vue.circles[i].getNode();
-          if (tmpRef.attrs.id == child.data.id) {
-            ref = tmpRef;
-            //mark for later deletion
-            child.data.markedForDeletion = true;
-            break;
+        if (!child) {
+          console.error("Child not defined!" + child);
+          console.error(endstate);
+          console.error(other);
+        }
+        if (child.constructor.name === "Variable") {
+          // Handle variables through a different array
+          for (let i = 0; i < this.vue.variables.length; ++i) {
+            const tmpRef = this.vue.variables[i].getNode();
+            if (tmpRef.attrs.id == child.data.id) {
+              ref = tmpRef;
+              //mark for later deletion
+              child.data.markedForDeletion = true;
+              break;
+            }
+          }
+        } else {
+          for (let i = 0; i < this.vue.circles.length; ++i) {
+            const tmpRef = this.vue.circles[i].getNode();
+            if (tmpRef.attrs.id == child.data.id) {
+              ref = tmpRef;
+              //mark for later deletion
+              child.data.markedForDeletion = true;
+              break;
+            }
           }
         }
-
         if (!ref) {
           console.error("Error ref not found!");
           console.error(child);
@@ -276,18 +467,57 @@ export default {
 
         setTimeout(() => {
           //start animation
-          ref.to({
-            x: endstate.x,
-            y: endstate.y,
-            radius: endstate.radius,
-            duration: animationDuration,
-            onFinish: () => {
-              child.data.visible = false;
-              if (other !== null) {
-                other.data.visible = false;
-              }
-            },
-          });
+          if (child.constructor.name === "Variable") {
+            if (!endstate) {
+              //Variable disapearing
+              ref.to({
+                x: child.data.x,
+                y: child.data.y,
+                radius: 0,
+                width: 0,
+                height: 0,
+                fontSize: 0,
+                duration: animationDuration,
+                onFinish: () => {
+                  child.data.visible = false;
+                  if (other !== null) {
+                    other.data.visible = false;
+                  }
+                },
+              });
+            } else {
+              //Variable for calling and crossing
+              ref.to({
+                x: endstate.x - endstate.radius,
+                y: endstate.y - endstate.radius,
+                radius: endstate.radius,
+                width: endstate.radius * 2,
+                height: endstate.radius * 2.3,
+                fontSize: endstate.radius * 2,
+                duration: animationDuration,
+                onFinish: () => {
+                  child.data.visible = false;
+                  if (other !== null) {
+                    other.data.visible = false;
+                  }
+                },
+              });
+            }
+            //default crosses
+          } else {
+            ref.to({
+              x: endstate.x,
+              y: endstate.y,
+              radius: endstate.radius,
+              duration: animationDuration,
+              onFinish: () => {
+                child.data.visible = false;
+                if (other !== null) {
+                  other.data.visible = false;
+                }
+              },
+            });
+          }
           //Set text for current operation
           this.statusOperation = thisOperation;
         }, this.animationDelayBuffer);
@@ -303,24 +533,58 @@ export default {
         this.animationDelayBuffer = 0;
       }, this.animationDelayBuffer);
     },
-
+    createNotification(text, time = 1000) {
+      this.blockOtherMessages = true;
+      this.statusText = text;
+      setTimeout(() => {
+        this.blockOtherMessages = false;
+      }, time);
+    },
     createMark() {
-      const newCircle = this.createCircle(
+      //get mark in which the new variable or mark is inn
+      const insideRef = this.unwrittenCross.isIn(
         this.mCircleConfig.x,
         this.mCircleConfig.y,
-        this.mCircleConfig.radius,
-        this.mCircleConfig.strokeWidth
-      );
-      const insideRef = this.hiddenCross.isIn(
-        newCircle.x,
-        newCircle.y,
-        newCircle.radius
-      );
-      const newCross = new Node(
-        insideRef.name + " " + insideRef.childs.length,
-        newCircle
+        this.mCircleConfig.radius
       );
 
+      if (insideRef.constructor.name === "Variable") {
+        //Creation inside a variable is not allowed
+        this.createNotification("Creation inside a variable is not allowed");
+        return;
+      }
+
+      //Creating the new child
+      let newCross = null;
+      if (this.activeVariableCreation) {
+        const newVariable = this.createVariable(
+          this.mTextConfig.x + this.mTextConfig.radius,
+          this.mTextConfig.y + this.mTextConfig.radius,
+          this.mTextConfig.text,
+          this.mTextConfig.fontSize,
+          this.mTextConfig.width,
+          this.mTextConfig.height,
+          this.mCircleConfig.radius,
+          this.mCircleConfig.strokeWidth
+        );
+        newCross = new Variable(
+          "V " + insideRef.name + " " + insideRef.childs.length,
+          newVariable
+        );
+      } else {
+        const newCircle = this.createCircle(
+          this.mCircleConfig.x,
+          this.mCircleConfig.y,
+          this.mCircleConfig.radius,
+          this.mCircleConfig.strokeWidth
+        );
+        newCross = new Node(
+          insideRef.name + " " + insideRef.childs.length,
+          newCircle
+        );
+      }
+
+      //pre calculations for collision check
       const dx = newCross.data.x - insideRef.data.x;
       const dy = newCross.data.y - insideRef.data.y;
       const d = Math.sqrt(dx * dx + dy * dy);
@@ -335,6 +599,7 @@ export default {
           d > newCross.data.radius + ncsw + insideRef.data.radius + irsw
         )
       ) {
+        this.createNotification("Intersection of crosses not allowed");
         return;
       }
       // check if another cross inside this cross in inside the new cross
@@ -347,33 +612,55 @@ export default {
         const csw = child.data.strokeWidth / 2;
 
         if (d + child.data.radius + csw < newCross.data.radius - ncsw) {
+          if (this.activeVariableCreation) {
+            this.createNotification("variables can not hold marks");
+            return false;
+          }
           insideChilds.push(child);
         } else if (d > child.data.radius + csw + newCross.data.radius + ncsw) {
           continue;
         } else {
+          this.createNotification("Intersection of crosses not allowed");
           return false;
         }
       }
-      newCross.childs = insideChilds;
-      const notFiltered = insideRef.childs.filter(
-        (a) => !insideChilds.includes(a)
-      );
-      insideRef.childs = notFiltered;
-      insideRef.childs.push(newCross);
-      this.list.push(newCross);
+      if (!this.activeVariableCreation) {
+        newCross.childs = insideChilds;
+        const notFiltered = insideRef.childs.filter(
+          (a) => !insideChilds.includes(a)
+        );
+        insideRef.childs = notFiltered;
+        insideRef.childs.push(newCross);
+        this.list.push(newCross);
+      } else {
+        insideRef.childs.push(newCross);
+        this.variablesList.push(newCross);
+        this.updateVariables();
+      }
+      // refresh logic table if open
+      if (this.active_logic_table) {
+        this.calculateLogicTable();
+      }
     },
     handleMouseUp() {
       this.animationDelayBuffer = 0;
       this.mCircleConfig.visible = false;
+      this.mTextConfig.visible = false;
       if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
         this.createMark();
       }
-      this.hiddenCross.refresh(null);
-      this.hiddenCross.isMarked(this.visualizeMarkedState);
+      this.unwrittenCross.refresh(null);
+      this.unwrittenCross.isMarked(this.visualizeMarkedState);
     },
 
     visualizeMarkedState(markRef, marked) {
-      if (marked && this.activeVisualizeMarkedState) {
+      if (markRef.constructor.name === "Variable") {
+        if (marked) {
+          markRef.data.opacity = 0.5;
+        } else {
+          markRef.data.opacity = 1;
+        }
+      } else if (marked && this.activeVisualizeMarkedState) {
         const newDashSize = 2 * markRef.data.strokeWidth;
         markRef.data.dash = [newDashSize, newDashSize];
       } else {
@@ -381,6 +668,24 @@ export default {
       }
     },
 
+    updateVariables() {
+      // reset and count number of actives variables (used for creating the logic table)
+      this.variables.forEach((e) => (e.active = 0));
+      //set the state of each specific variable depending on the global variable state
+      for (let i = 0; i < this.variablesList.length; ++i) {
+        const variable = this.variablesList[i];
+        const variableState = this.variables.find(
+          (e) => e.name === variable.data.text
+        );
+        if (typeof variableState === "undefined") {
+          console.error("Error unknow variable name");
+          console.error(variable);
+          console.error(this.variables);
+        }
+        variableState.active += 1;
+        variable.marked = !variableState.value;
+      }
+    },
     handleMouseMove() {
       const pointer = this.getRelativePointerPos();
       if (this.mCircleConfig.visible) {
@@ -394,22 +699,95 @@ export default {
           this.mCircleConfig.strokeWidth * 4,
           4 / this.stage.scaleX(),
         ];
+        if (this.activeVariableCreation) {
+          this.mTextConfig.radius = this.mCircleConfig.radius;
+          this.mTextConfig.width = this.mCircleConfig.radius * 2;
+          this.mTextConfig.height = this.mCircleConfig.radius * 2.3; //trial and error
+          this.mTextConfig.fontSize = this.mCircleConfig.radius * 2;
+          this.mTextConfig.x = this.mCircleConfig.x - this.mCircleConfig.radius;
+          this.mTextConfig.y = this.mCircleConfig.y - this.mCircleConfig.radius;
+        }
       } else {
-        const insideRef = this.hiddenCross.isIn(pointer.x, pointer.y, 0);
-        this.statusText =
-          insideRef.name +
-          " is " +
-          (insideRef.isMarked(null) ? "marked" : "unmarked");
+        const insideRef = this.unwrittenCross.isIn(pointer.x, pointer.y, 0);
+
+        if (!this.blockOtherMessages) {
+          this.statusText =
+            insideRef.name +
+            " is " +
+            (insideRef.isMarked(null) ? "marked" : "unmarked");
+        }
       }
+    },
+
+    calculateLogicTable() {
+      this.updateVariables();
+      const safedVariables = JSON.parse(JSON.stringify(this.variables));
+
+      //build header from used variables
+      const headers = [];
+      this.variables.forEach((e) =>
+        e.active > 0
+          ? headers.push({
+              data: e,
+              text: e.name,
+              value: e.name,
+              active: e.active,
+            })
+          : null
+      );
+      const states = [];
+      const numStates = 1 << headers.length; //2^variable states - because of unmarked & marked value
+
+      //wtf am i doing here - there must be a smarter way to generate truth tables
+      for (let i = 0; i < numStates; ++i) {
+        const newEntry = {}; //lets build our row
+        const bitPattern = i;
+        for (let e = 0; e < headers.length; ++e) {
+          const specificBit = 1 << e;
+          // bit set?
+          if (specificBit & bitPattern) {
+            headers[e].data.value = true;
+            newEntry[headers[e].value] = true;
+          } else {
+            headers[e].data.value = false;
+            newEntry[headers[e].value] = false;
+          }
+        }
+        this.updateVariables();
+        newEntry["U"] = this.unwrittenCross.isMarked(null);
+        states.push(newEntry);
+      }
+      headers.push({ text: "Unwritten Cross", value: "U" });
+      this.logicTable = { headers: headers, states: states };
+      this.variables = safedVariables;
+      this.updateVariables();
     },
 
     deleteItems() {
       for (let i = 0; i < this.list.length; ++i) {
         if (this.list[i].data.markedForDeletion) {
           this.$delete(this.list, i);
+          --i;
         }
       }
-      this.hiddenCross.refresh(null);
+      for (let i = 0; i < this.variablesList.length; ++i) {
+        if (this.variablesList[i].data.markedForDeletion) {
+          this.$delete(this.variablesList, i);
+          --i;
+        }
+      }
+
+      // right now we delete after all operations happend, normally only a single state should be left
+      if (this.variablesList.length + this.list.length > 1) {
+        console.error("Memory leak! More than one variable left!");
+        console.error(this.variablesList);
+        console.error(this.list);
+      }
+      this.unwrittenCross.refresh(null);
+      // refresh logic table if open
+      if (this.active_logic_table) {
+        this.calculateLogicTable();
+      }
     },
 
     handleTouchMove(e) {
@@ -443,16 +821,16 @@ export default {
           y: touch2.clientY,
         };
 
-        if (!this.lastCenter) {
-          this.lastCenter = getCenter(p1, p2);
+        if (!this.touchLastCenter) {
+          this.touchLastCenter = getCenter(p1, p2);
           return;
         }
         var newCenter = getCenter(p1, p2);
 
         var dist = getDistance(p1, p2);
 
-        if (!this.lastDist) {
-          this.lastDist = dist;
+        if (!this.touchLastDist) {
+          this.touchLastDist = dist;
         }
         // local coordinates of center point
         var pointTo = {
@@ -460,13 +838,13 @@ export default {
           y: (newCenter.y - this.stage.y()) / this.stage.scaleX(),
         };
 
-        var scale = this.stage.scaleX() * (dist / this.lastDist);
+        var scale = this.stage.scaleX() * (dist / this.touchLastDist);
 
         this.stage.scale({ x: scale, y: scale });
 
         // calculate new position of the stage
-        var dx = newCenter.x - this.lastCenter.x;
-        var dy = newCenter.y - this.lastCenter.y;
+        var dx = newCenter.x - this.touchLastCenter.x;
+        var dy = newCenter.y - this.touchLastCenter.y;
 
         var newPos = {
           x: newCenter.x - pointTo.x * scale + dx,
@@ -476,8 +854,8 @@ export default {
         this.stage.position(newPos);
         this.stage.batchDraw();
 
-        this.lastDist = dist;
-        this.lastCenter = newCenter;
+        this.touchLastDist = dist;
+        this.touchLastCenter = newCenter;
       } else {
         this.handleMouseMove();
       }
@@ -486,9 +864,9 @@ export default {
       e.evt.preventDefault();
       //normal blur event doesnt occur if touch is used
       //thus send it here, to close the second menu automatically if its opened
-      this.$emit("blur"); 
-      this.lastDist = 0;
-      this.lastCenter = null;
+      this.$emit("blur");
+      this.touchLastDist = 0;
+      this.touchLastCenter = null;
       this.handleMouseDown();
     },
     handleTouchEnd() {
@@ -554,8 +932,8 @@ export default {
     },
   },
   mounted() {
-    this.hiddenCross = new Node(
-      "Hidden Cross",
+    this.unwrittenCross = new Node(
+      "unwritten cross",
       this.createCircle(0, 0, Infinity),
       0
     );
