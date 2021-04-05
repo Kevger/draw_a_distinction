@@ -14,7 +14,7 @@ space, i.e. a distinction has been made, then this space is
 marked. However, if you go into the area that was distinguished
 by the distinction (inside and outside), it will be unmarked
 again unless you introduce another distinction there.
-![the  mark](public/img/mark.png)
+![the  mark](github_images/mark.jpeg)
 Everything is itself enclosed by an »unwritten cross«. You could
 see that as in this case the edge of the screen, of the computer
 or as the observer (who distinguishes himself at the same time)
@@ -29,7 +29,7 @@ equivalent to making a single distinction. For example, if I
 call the »car« (which is equivalent to making a distinction) and
 then call the »car« again, it is the same as if I called the
 table once.
-![the  mark](public/img/calling.png)
+![the  mark](github_images/calling.jpeg)
 
 The second axiom is »The law of Crossing«. A distinction in a
 distinction annuls the distinction. In this case, if I have two
@@ -37,7 +37,7 @@ distinctions stacked inside each other, then that is equivalent
 to the unmarked state. Each expression can be transformed into
 exactly one of two states, the marked or unmarked space (we
 ignore here the re-entry indicated in LoF).
-![the  mark](public/img/crossing.png)
+![the  mark](github_images/crossing.jpeg)
 
 ## Variables
 
@@ -48,7 +48,7 @@ by the second axiom »law of crossing« or not. These are
 individually toggleable in this simulator. Crosses and Variables
 (which have a collision check of a circle) are not allowed to
 intersect.
-![the  mark](public/img/variables.png)
+![the  mark](github_images/variables.jpeg)
 
 ## Logic
 
@@ -63,7 +63,7 @@ cross, but no crosses at all are just no crosses.Further logical
 functions can be taken from the picture below. In the simulator,
 a logic table can be generated and displayed on the basis of the
 current expression.
-![the  mark](public/img/logic.png)
+![the  mark](github_images/logic.jpeg)
 The simulator offers several functions. The Run function applies
 both axioms to the current expression until the expression has
 been fully converted to a marked or unmarked state.
