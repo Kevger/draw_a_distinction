@@ -256,12 +256,12 @@
 
 
 <script>
-import Node, { Variable } from "../plugins/tree";
+import Cross, { Variable } from "../plugins/tree";
 
 const width = window.innerWidth;
 const height = window.innerHeight;
 export default {
-  name: "Canvas",
+  name: "Space",
   watch: {
     activeVisualizeMarkedState() {
       this.unwrittenCross.isMarked(this.visualizeMarkedState);
@@ -286,8 +286,8 @@ export default {
         { name: "Z", value: false, active: 0 },
       ],
       variablesChanged: false,
-      idCnt: 0,
-      vidCnt: 10000000, // so that idCnt (marks) and vidCnt will not have the same values
+      idCnt: 0, //mark id
+      vidCnt: 10000000, // variable id - so that idCnt (marks) and vidCnt will not have the same values
       activeVisualizeMarkedState: true,
       active_menu: true,
       isRunning: false,
@@ -394,6 +394,7 @@ export default {
         this.mCircleConfig.x = this.mCircleConfig.startX;
         this.mCircleConfig.y = this.mCircleConfig.startY;
         this.mCircleConfig.radius = 0;
+
         if (this.activeVariableCreation) {
           this.mTextConfig.visible = true;
           this.mTextConfig.text = this.activeVariableCreation;
@@ -404,6 +405,7 @@ export default {
           this.mTextConfig.fontSize = this.mCircleConfig.radius;
         }
 
+        // draw bounding circles of variables during drawing
         for (let i = 0; i < this.variablesList.length; ++i) {
           const variable = this.variablesList[i];
           const variableCollsionCircle = this.createCircle(
@@ -414,22 +416,25 @@ export default {
           );
           variableCollsionCircle.markedForDeletion = true; //important or else an memory leak happens
           variableCollsionCircle.dash = [
-            variable.data.strokeWidth ,
+            variable.data.strokeWidth,
             variable.data.strokeWidth * 3,
           ];
-          const variableCollisionMark = new Node(
+          const variableCollisionMark = new Cross(
             "dummy variable circle: " + variable.name,
             variableCollsionCircle
           );
+          // temporary push them to the mark list, so that they are drawn reactivly
+          // they dont have a parent, thus they dont get attention from the unwritten cross
+          // because markedForDeletion is true, they will be deleted after the mouse is released
           this.list.push(variableCollisionMark);
         }
       }
+
       //reference of cross u clicked into (the unwritten cross extends indefinetly)
       const insideRef = this.unwrittenCross.isIn(pointer.x, pointer.y, 0);
-      this.statusText =
-        insideRef.name +
-        " is " +
-        (insideRef.isMarked() ? "marked" : "unmarked");
+      this.printStatusMessage(
+        insideRef.name + " is " + (insideRef.isMarked() ? "marked" : "unmarked")
+      );
     },
 
     startCollapse() {
@@ -552,6 +557,7 @@ export default {
         this.animationDelayBuffer = 0;
       }, this.animationDelayBuffer);
     },
+    // Creates a notification text and blocks the other messages from being displayed
     createNotification(text, time = 1000) {
       this.blockOtherMessages = true;
       this.statusText = text;
@@ -559,7 +565,11 @@ export default {
         this.blockOtherMessages = false;
       }, time);
     },
-    createMark() {
+    // prints a status message
+    printStatusMessage(text) {
+      if (!this.blockOtherMessages) this.statusText = text;
+    },
+    createCross() {
       //get mark in which the new variable or mark is inn
       const insideRef = this.unwrittenCross.isIn(
         this.mCircleConfig.x,
@@ -597,7 +607,7 @@ export default {
           this.mCircleConfig.radius,
           this.mCircleConfig.strokeWidth
         );
-        newCross = new Node(
+        newCross = new Cross(
           insideRef.name + " " + insideRef.childs.length,
           newCircle
         );
@@ -666,7 +676,7 @@ export default {
       this.mCircleConfig.visible = false;
       this.mTextConfig.visible = false;
       if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
-        this.createMark();
+        this.createCross();
       }
       this.deleteItems();
       this.unwrittenCross.refresh(null);
@@ -730,12 +740,11 @@ export default {
       } else {
         const insideRef = this.unwrittenCross.isIn(pointer.x, pointer.y, 0);
 
-        if (!this.blockOtherMessages) {
-          this.statusText =
-            insideRef.name +
+        this.printStatusMessage(
+          insideRef.name +
             " is " +
-            (insideRef.isMarked(null) ? "marked" : "unmarked");
-        }
+            (insideRef.isMarked(null) ? "marked" : "unmarked")
+        );
       }
     },
 
@@ -952,7 +961,7 @@ export default {
     },
   },
   mounted() {
-    this.unwrittenCross = new Node(
+    this.unwrittenCross = new Cross(
       "unwritten cross",
       this.createCircle(0, 0, Infinity),
       0

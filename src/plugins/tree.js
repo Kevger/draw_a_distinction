@@ -1,5 +1,5 @@
 
-export default class Node {
+export default class Cross {
     constructor(name, data, depth = 0) {
         this.childs = [];
         this.data = data;
@@ -89,10 +89,7 @@ export default class Node {
             const m1 = this.childs[1].markCollapse(drawHandler);
 
             if (m0) {
-                if (this.childs[0].constructor.name == 'Variable') {
-                    console.log("m0 - variable");
-                } else {
-
+                if (this.childs[0].constructor.name !== 'Variable') {
                     const childChild = this.childs[0].childs[0];
                     drawHandler(childChild,
                         { x: this.childs[0].data.x, y: this.childs[0].data.y, radius: this.childs[0].data.radius },
@@ -102,12 +99,7 @@ export default class Node {
                     this.childs.splice(0, 1);
             }
             if (m1) {
-                if (this.childs[1].constructor.name == 'Variable') {
-                    console.log("m1 - variable");
-
-                }
-                else {
-
+                if (this.childs[1].constructor.name !== 'Variable') {
                     const childChild = this.childs[1].childs[0];
                     drawHandler(childChild,
                         { x: this.childs[1].data.x, y: this.childs[1].data.y, radius: this.childs[1].data.radius },
@@ -161,11 +153,9 @@ export default class Node {
 }
 
 
-export class Variable {
+export class Variable extends Cross{
     constructor(name, data, depth = 0) {
-        this.data = data;
-        this.name = name;
-        this.depth = depth;
+        super(name,data,depth)
         this.marked = false;
     }
 
@@ -183,7 +173,6 @@ export class Variable {
         //only do a "recross" here -> just let the mark disappear
         if (this.marked) {
             drawHandler(this, null, null);
-            console.log("marked");
         }
         return this.marked;
     }

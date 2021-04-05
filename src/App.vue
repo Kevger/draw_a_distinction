@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <Canvas @blur="closeMenu2" v-on:mouseDown="closeMenu2" />
+      <Space @blur="closeMenu2" v-on:mouseDown="closeMenu2" />
       <MenuProjects ref="menuProjects" @explainWhy="explainingWhy = true" />
       <v-dialog v-if="explainingWhy" v-model="explainingWhy" fullscreen>
         <ExplanationWhy @windowClosed="explainingWhy = false" />
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import Canvas from "./components/Canvas";
+import Space from "./components/Space";
 import MenuProjects from "./components/MenuProjects";
 import ExplanationWhy from "./components/ExplanationWhy";
 
@@ -19,7 +19,7 @@ export default {
   name: "App",
 
   components: {
-    Canvas,
+    Space,
     MenuProjects,
     ExplanationWhy,
   },
