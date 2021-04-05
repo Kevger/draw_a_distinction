@@ -55,7 +55,7 @@
       v-model="active_menu"
       :close-on-content-click="false"
       :close-on-click="false"
-      :nudge-width="145"
+      :nudge-width="135"
       offset-y
     >
       <template v-slot:activator="{ on }">
@@ -75,8 +75,9 @@
         </v-hover>
       </template>
 
-      <v-card dark color="rgb(0,0,0,0.5)">
+      <v-card class="mt-1" dark color="rgb(0,0,0,0.5)">
         <v-card-title
+          class="mt-n1 mb-0"
           style="
             padding-left: 2%;
             padding-right: 2%;
@@ -98,64 +99,108 @@
           style="padding-left: 2%; padding-right: 2%; padding-top: 0%"
           fluid
         >
-          <v-row no-gutters>
-            <v-col>
-              <v-slider
-                v-model="animationDuration"
-                min="0"
-                max="5"
-                thumb-label
-                thumb-color="light-grey"
-                hide-details
-                step="0.2"
-                label="Delay"
-                append-icon="mdi-metronome"
-                :disabled="isRunning"
-              ></v-slider>
-            </v-col>
+          <v-row class="ma-0 pa-0" no-gutters>
+            <v-slider
+              v-model="animationDuration"
+              min="0"
+              max="5"
+              thumb-label
+              thumb-color="light-grey"
+              hide-details
+              step="0.2"
+              label="Delay"
+              append-icon="mdi-metronome"
+              :disabled="isRunning"
+            >
+              <template v-slot:thumb-label="{ value }">
+                {{ value + "s" }}
+              </template>
+            </v-slider>
           </v-row>
-          <v-row no-gutters style="margin-top: 3%">
-            <v-card-actions class="ma-0 pa-0">
-              <v-btn
-                v-model="isRunning"
-                :color="isRunning ? 'secondary' : 'primary'"
-                @click="startCollapse"
-                tile
-              >
-                <v-icon>mdi-play</v-icon>run
-              </v-btn>
-              <v-btn
-                v-model="configKonva.draggable"
-                :color="configKonva.draggable ? 'secondary' : 'primary'"
-                value="false"
-                @click="configKonva.draggable = !configKonva.draggable"
-                hide-details
-                tile
-              >
-                <v-icon small>mdi-cursor-pointer</v-icon>Move
-              </v-btn>
-              <v-btn
-                v-model="activeVisualizeMarkedState"
-                :color="activeVisualizeMarkedState ? 'secondary' : 'primary'"
-                value="false"
-                @click="
-                  activeVisualizeMarkedState = !activeVisualizeMarkedState
-                "
-                hide-details
-                :disabled="isRunning"
-                tile
-                style="font-size: 76%"
-              >
-                <v-icon small>mdi-chart-donut</v-icon>Show
-              </v-btn>
+
+          <v-row class="ml-n3 mb-n4" no-gutters>
+            <v-card-actions>
+              <v-tooltip bottom style="flex: 1 0 auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="mx-1 px-2"
+                    v-model="isRunning"
+                    :color="isRunning ? 'secondary' : 'primary'"
+                    @click="startCollapse"
+                    tile
+                    v-bind="attrs"
+                    v-on="on"
+                    :loading="isRunning"
+                    :disabled="isRunning"
+                  >
+                    <v-icon>mdi-play</v-icon>run
+                  </v-btn>
+                </template>
+                <span
+                  >Apply the two axioms automatically on the current
+                  expression</span
+                >
+              </v-tooltip>
+              <v-spacer></v-spacer>
+              <v-tooltip bottom style="flex: 1 0 auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="mx-1 px-2"
+                    v-model="configKonva.draggable"
+                    :color="configKonva.draggable ? 'secondary' : 'primary'"
+                    value="false"
+                    @click="configKonva.draggable = !configKonva.draggable"
+                    hide-details
+                    tile
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon small>mdi-cursor-pointer</v-icon>Move
+                  </v-btn>
+                </template>
+                <span>Move around in space</span>
+              </v-tooltip>
+              <v-spacer></v-spacer>
+
+              <v-tooltip bottom style="flex: 1 0 auto">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="mx-1 pr-1"
+                    v-model="activeVisualizeMarkedState"
+                    :color="
+                      activeVisualizeMarkedState ? 'secondary' : 'primary'
+                    "
+                    value="false"
+                    @click="
+                      activeVisualizeMarkedState = !activeVisualizeMarkedState
+                    "
+                    hide-details
+                    :disabled="isRunning"
+                    tile
+                    v-bind="attrs"
+                    v-on="on"
+                    style="font-size: 85%"
+                  >
+                    <v-icon small>mdi-chart-donut</v-icon>Show
+                  </v-btn>
+                </template>
+                <span>Visualize the current states of distinctions</span>
+              </v-tooltip>
             </v-card-actions>
           </v-row>
-          <v-row no-gutters style="margin-top: 3%">
-            <v-card-actions class="ma-0 pa-0">
+
+          <v-row class="ml-n3 mb-n3 mt-2" no-gutters>
+            <v-card-actions>
               <v-btn
-                tile
-                v-for="item in this.variables"
+                :class="`mx-1 px-2 elevation-${
+                  activeVariableCreation == item.name ? 8 : 2
+                } `"
+                :disabled="isRunning"
                 :key="item.name"
+                v-for="item in this.variables"
+                tile
+                hide-details
+                :ripple="true"
                 :color="
                   activeVariableCreation == item.name ? 'secondary' : 'primary'
                 "
@@ -166,8 +211,11 @@
               >
                 {{ item.name }}
                 <v-switch
-                  @click="variablesChanged = !variablesChanged"
+                  class="mb-0 pa-0"
+                  dense
+                  @click.stop="variablesChanged = !variablesChanged"
                   v-model="item.value"
+                  :ripple="true"
                 />
               </v-btn>
             </v-card-actions>
@@ -315,6 +363,7 @@ export default {
         visible: false,
         align: "center",
         verticalAlign: "middle",
+        opacity: 0.5,
         width: 20,
         height: 20,
 
@@ -406,27 +455,29 @@ export default {
         }
 
         // draw bounding circles of variables during drawing
-        for (let i = 0; i < this.variablesList.length; ++i) {
-          const variable = this.variablesList[i];
-          const variableCollsionCircle = this.createCircle(
-            variable.data.x,
-            variable.data.y,
-            variable.data.radius,
-            variable.data.strokeWidth
-          );
-          variableCollsionCircle.markedForDeletion = true; //important or else an memory leak happens
-          variableCollsionCircle.dash = [
-            variable.data.strokeWidth,
-            variable.data.strokeWidth * 3,
-          ];
-          const variableCollisionMark = new Cross(
-            "dummy variable circle: " + variable.name,
-            variableCollsionCircle
-          );
-          // temporary push them to the mark list, so that they are drawn reactivly
-          // they dont have a parent, thus they dont get attention from the unwritten cross
-          // because markedForDeletion is true, they will be deleted after the mouse is released
-          this.list.push(variableCollisionMark);
+        if (!this.isRunning) {
+          for (let i = 0; i < this.variablesList.length; ++i) {
+            const variable = this.variablesList[i];
+            const variableCollsionCircle = this.createCircle(
+              variable.data.x,
+              variable.data.y,
+              variable.data.radius,
+              variable.data.strokeWidth
+            );
+            variableCollsionCircle.markedForDeletion = true; //important or else an memory leak happens
+            variableCollsionCircle.dash = [
+              variable.data.strokeWidth,
+              variable.data.strokeWidth * 3,
+            ];
+            const variableCollisionMark = new Cross(
+              "dummy variable circle: " + variable.name,
+              variableCollsionCircle
+            );
+            // temporary push them to the mark list, so that they are drawn reactivly
+            // they dont have a parent, thus they dont get attention from the unwritten cross
+            // because markedForDeletion is true, they will be deleted after the mouse is released
+            this.list.push(variableCollisionMark);
+          }
         }
       }
 
@@ -672,14 +723,15 @@ export default {
       }
     },
     handleMouseUp() {
-      this.animationDelayBuffer = 0;
       this.mCircleConfig.visible = false;
       this.mTextConfig.visible = false;
-      if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
-        this.createCross();
+      if (!this.isRunning) {
+        if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
+          this.createCross();
+        }
+        this.deleteItems();
+        this.unwrittenCross.refresh(null);
       }
-      this.deleteItems();
-      this.unwrittenCross.refresh(null);
       this.unwrittenCross.isMarked(this.visualizeMarkedState);
     },
 
@@ -729,6 +781,14 @@ export default {
           this.mCircleConfig.strokeWidth * 4,
           4 / this.stage.scaleX(),
         ];
+        if (this.isRunning) {
+          this.mCircleConfig.opacity = 0.1;
+
+          this.mTextConfig.opacity = 0.1;
+        } else {
+          this.mCircleConfig.opacity = 1.0;
+          this.mTextConfig.opacity = 0.5;
+        }
         if (this.activeVariableCreation) {
           this.mTextConfig.radius = this.mCircleConfig.radius;
           this.mTextConfig.width = this.mCircleConfig.radius * 2;
