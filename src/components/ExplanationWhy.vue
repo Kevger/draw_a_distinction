@@ -64,7 +64,7 @@
                 axiom, if the variable is a cross or not. Two variables in the
                 same space are a logical or. A cross and no cross are just one
                 cross and two crosses are by the first axiom equivalent to one
-                cross, but no crosses at all are just no crosses.Further logical
+                cross, but no crosses at all are just no crosses. Further logical
                 functions can be taken from the picture below. In the simulator,
                 a logic table can be generated and displayed on the basis of the
                 current expression.

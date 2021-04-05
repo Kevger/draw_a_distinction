@@ -144,7 +144,7 @@
                 hide-details
                 :disabled="isRunning"
                 tile
-                style="font-size: 76%;"
+                style="font-size: 76%"
               >
                 <v-icon small>mdi-chart-donut</v-icon>Show
               </v-btn>
@@ -153,7 +153,7 @@
           <v-row no-gutters style="margin-top: 3%">
             <v-card-actions class="ma-0 pa-0">
               <v-btn
-              tile
+                tile
                 v-for="item in this.variables"
                 :key="item.name"
                 :color="
@@ -339,7 +339,6 @@ export default {
   methods: {
     openLogicTable() {
       this.calculateLogicTable();
-      console.log(this.logicTable);
     },
     createVariable(x, y, text, fontSize, width, height, radius, strokeWidth) {
       const newVariable = {
@@ -403,6 +402,26 @@ export default {
           this.mTextConfig.x = this.mCircleConfig.x;
           this.mTextConfig.y = this.mCircleConfig.y;
           this.mTextConfig.fontSize = this.mCircleConfig.radius;
+        }
+
+        for (let i = 0; i < this.variablesList.length; ++i) {
+          const variable = this.variablesList[i];
+          const variableCollsionCircle = this.createCircle(
+            variable.data.x,
+            variable.data.y,
+            variable.data.radius,
+            variable.data.strokeWidth
+          );
+          variableCollsionCircle.markedForDeletion = true; //important or else an memory leak happens
+          variableCollsionCircle.dash = [
+            variable.data.strokeWidth ,
+            variable.data.strokeWidth * 3,
+          ];
+          const variableCollisionMark = new Node(
+            "dummy variable circle: " + variable.name,
+            variableCollsionCircle
+          );
+          this.list.push(variableCollisionMark);
         }
       }
       //reference of cross u clicked into (the unwritten cross extends indefinetly)
@@ -649,6 +668,7 @@ export default {
       if (this.mCircleConfig.radius > 1 / this.stage.scaleX()) {
         this.createMark();
       }
+      this.deleteItems();
       this.unwrittenCross.refresh(null);
       this.unwrittenCross.isMarked(this.visualizeMarkedState);
     },
@@ -777,12 +797,12 @@ export default {
         }
       }
 
-      // right now we delete after all operations happend, normally only a single state should be left
-      if (this.variablesList.length + this.list.length > 1) {
-        console.error("Memory leak! More than one variable left!");
-        console.error(this.variablesList);
-        console.error(this.list);
-      }
+      //// right now we delete after all operations happend, normally only a single state should be left
+      //if (this.variablesList.length + this.list.length > 1) {
+      //  console.error("Memory leak! More than one variable left!");
+      //  console.error(this.variablesList);
+      //  console.error(this.list);
+      //}
       this.unwrittenCross.refresh(null);
       // refresh logic table if open
       if (this.active_logic_table) {
