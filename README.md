@@ -4,7 +4,7 @@
 
 ## About
 
-In 1969 George Spencer-Brown published the work »Laws of Form«,
+In 1969 George Spencer-Brown published the work »Laws of Form« (LoF),
 in this work he tried to build arithmetic, algebra, and logic on
 the basis of a single operation, the distinction. This
 distinction, also called mark or cross, is at the same time
@@ -81,5 +81,14 @@ limits of precision of the computer) and zoom out, apply
 distinctions here or there. The Move function is only relevant
 for the PC, with it you can move on the white surface, on the
 smartphone touch gestures do the trick.
+
+LoF also offers non-negligible epistemological implications in
+the field of radical constructivism. It provides a solid basis
+for explaining autopoetic systems (Humberto Maturana and
+Francisco Varela) and for deriving theories of observation and
+systemtheory (Niklas Luhmann) and cybernetic concepts (Heinz von
+Foerster). Moreover, there are opinions that the statements
+presented in Laws of Form are the basis of all cognition. In
+this simulator, however, only the basics will be presented.
 
 

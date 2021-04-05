@@ -32,9 +32,9 @@
                 and fixed rules. In LoF there are exactly two axioms. The first
                 one is »The law of Calling«. Making a distinction twice is
                 equivalent to making a single distinction. For example, if I
-                call the »lion« (which is equivalent to making a distinction) and
-                then call the »lion« again, it is the same as if I called the
-                lion once.
+                call the »lion« (which is equivalent to making a distinction)
+                and then call the »lion« again, it is the same as if I called
+                the lion once.
               </p>
               <v-img src="img/calling.png" :contain="true"></v-img>
               <p>
@@ -89,6 +89,16 @@
                 distinctions here or there. The Move function is only relevant
                 for the PC, with it you can move on the white surface, on the
                 smartphone touch gestures do the trick.
+              </p>
+              <p>
+                LoF also offers non-negligible epistemological implications in
+                the field of radical constructivism. It provides a solid basis
+                for explaining autopoetic systems (Humberto Maturana and
+                Francisco Varela) and for deriving theories of observation and
+                systemtheory (Niklas Luhmann) and cybernetic concepts (Heinz von
+                Foerster). Moreover, there are opinions that the statements
+                presented in Laws of Form are the basis of all cognition. In
+                this simulator, however, only the basics will be presented.
               </p>
             </v-card-text>
           </v-col>
