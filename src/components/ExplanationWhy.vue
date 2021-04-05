@@ -21,19 +21,20 @@
 
               <v-img src="img/mark.png" :contain="true"></v-img>
               <p>
-                Everything is itself enclosed by an »unwritten cross«. You could
-                see that as in this case the edge of the screen, of the computer
-                or as the observer (who distinguishes himself at the same time)
-                in whose perceptual space the distinctions are carried out.
+                Everything is on the most outer layer enclosed by an »unwritten
+                cross«. You could see that as in this case the edge of the
+                screen, of the computer or as the observer (who distinguishes
+                himself at the same time) in whose perceptual space the
+                distinctions are carried out.
               </p>
               <p>
                 Every mathematical system is based on axioms, simply accepted
                 and fixed rules. In LoF there are exactly two axioms. The first
                 one is »The law of Calling«. Making a distinction twice is
                 equivalent to making a single distinction. For example, if I
-                call the »car« (which is equivalent to making a distinction) and
-                then call the »car« again, it is the same as if I called the
-                table once.
+                call the »lion« (which is equivalent to making a distinction) and
+                then call the »lion« again, it is the same as if I called the
+                lion once.
               </p>
               <v-img src="img/calling.png" :contain="true"></v-img>
               <p>

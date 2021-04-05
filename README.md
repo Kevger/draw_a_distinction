@@ -15,7 +15,7 @@ marked. However, if you go into the area that was distinguished
 by the distinction (inside and outside), it will be unmarked
 again unless you introduce another distinction there.
 ![the  mark](github_images/mark.jpeg)
-Everything is itself enclosed by an »unwritten cross«. You could
+Everything is on the most outer layer enclosed by an »unwritten cross«. You could
 see that as in this case the edge of the screen, of the computer
 or as the observer (who distinguishes himself at the same time)
 in whose perceptual space the distinctions are carried out.
@@ -28,7 +28,7 @@ one is »The law of Calling«. Making a distinction twice is
 equivalent to making a single distinction. For example, if I
 call the »car« (which is equivalent to making a distinction) and
 then call the »car« again, it is the same as if I called the
-table once.
+car once.
 ![the  mark](github_images/calling.jpeg)
 
 The second axiom is »The law of Crossing«. A distinction in a
@@ -59,7 +59,7 @@ negation. A cross around a variable negates it by the second
 axiom, if the variable is a cross or not. Two variables in the
 same space are a logical or. A cross and no cross are just one
 cross and two crosses are by the first axiom equivalent to one
-cross, but no crosses at all are just no crosses.Further logical
+cross, but no crosses at all are just no crosses. Further logical
 functions can be taken from the picture below. In the simulator,
 a logic table can be generated and displayed on the basis of the
 current expression.
