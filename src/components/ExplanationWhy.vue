@@ -95,7 +95,7 @@
                 the field of radical constructivism. It provides a solid basis
                 for explaining autopoetic systems (Humberto Maturana and
                 Francisco Varela) and for deriving theories of observation and
-                systemtheory (Niklas Luhmann) and cybernetic concepts (Heinz von
+                system theory (Niklas Luhmann) and cybernetic concepts (Heinz von
                 Foerster). Moreover, there are opinions that the statements
                 presented in Laws of Form are the basis of all cognition. In
                 this simulator, however, only the basics will be presented.
