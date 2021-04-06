@@ -69,7 +69,9 @@
             text-color="white"
             v-on="on"
           >
-            <v-avatar> <v-icon>mdi-cog</v-icon> </v-avatar>
+            <v-avatar>
+              <v-icon>{{ mdiCog }}</v-icon>
+            </v-avatar>
             Controls
           </v-chip>
         </v-hover>
@@ -109,7 +111,7 @@
               hide-details
               step="0.2"
               label="Delay"
-              append-icon="mdi-metronome"
+              :append-icon="mdiMetronome"
               :disabled="isRunning"
             >
               <template v-slot:thumb-label="{ value }">
@@ -133,7 +135,8 @@
                     :loading="isRunning"
                     :disabled="isRunning"
                   >
-                    <v-icon>mdi-play</v-icon>run
+                    <v-icon>{{ mdiPlay }}</v-icon
+                    >run
                   </v-btn>
                 </template>
                 <span
@@ -155,7 +158,8 @@
                     v-bind="attrs"
                     v-on="on"
                   >
-                    <v-icon small>mdi-cursor-pointer</v-icon>Move
+                    <v-icon small>{{ mdiCursorPointer }}</v-icon
+                    >Move
                   </v-btn>
                 </template>
                 <span>Move around in space</span>
@@ -181,7 +185,8 @@
                     v-on="on"
                     style="font-size: 85%"
                   >
-                    <v-icon small>mdi-chart-donut</v-icon>Show
+                    <v-icon small>{{ mdiChartDonut }}</v-icon
+                    >Show
                   </v-btn>
                 </template>
                 <span>Visualize the current states of distinctions</span>
@@ -240,8 +245,8 @@
     >
       <v-icon v-if="isRunning">{{
         statusOperation == "crossing"
-          ? "mdi-circle-double"
-          : "mdi-circle-multiple-outline"
+          ? mdiCircleDouble
+          : mdiCircleMultipleOutline
       }}</v-icon>
       {{ isRunning ? statusOperation : statusText }}
     </v-chip>
@@ -263,7 +268,7 @@
             style="position: absolute; bottom: 1%; right: 1%"
             v-on="on"
           >
-            <v-icon> mdi-gate-xor</v-icon>
+            <v-icon> {{ mdiGateXor }}</v-icon>
           </v-btn>
         </v-hover>
       </template>
@@ -305,7 +310,16 @@
 
 <script>
 import Cross, { Variable } from "../plugins/tree";
-
+import {
+  mdiCog,
+  mdiMetronome,
+  mdiPlay,
+  mdiCursorPointer,
+  mdiChartDonut,
+  mdiGateXor,
+  mdiCircleDouble,
+  mdiCircleMultipleOutline,
+} from "@mdi/js";
 const width = window.innerWidth;
 const height = window.innerHeight;
 export default {
@@ -383,6 +397,15 @@ export default {
       touchLastCenter: null,
       touchLastDist: 0,
       blockOtherMessages: false,
+
+      mdiCog: mdiCog,
+      mdiMetronome: mdiMetronome,
+      mdiPlay : mdiPlay,
+      mdiCursorPointer: mdiCursorPointer,
+      mdiChartDonut: mdiChartDonut,
+      mdiGateXor:mdiGateXor,
+      mdiCircleDouble:mdiCircleDouble,
+      mdiCircleMultipleOutline:mdiCircleMultipleOutline,
     };
   },
   methods: {
@@ -499,7 +522,7 @@ export default {
           console.error(endstate);
           console.error(other);
         }
-        if (child.constructor.name === "Variable") {
+        if (child instanceof Variable) {
           // Handle variables through a different array
           for (let i = 0; i < this.vue.variables.length; ++i) {
             const tmpRef = this.vue.variables[i].getNode();
@@ -542,7 +565,7 @@ export default {
 
         setTimeout(() => {
           //start animation
-          if (child.constructor.name === "Variable") {
+          if (child instanceof Variable) {
             if (!endstate) {
               //Variable disapearing
               ref.to({
@@ -628,7 +651,7 @@ export default {
         this.mCircleConfig.radius
       );
 
-      if (insideRef.constructor.name === "Variable") {
+      if (insideRef instanceof Variable) {
         //Creation inside a variable is not allowed
         this.createNotification("Creation inside a variable is not allowed");
         return;
@@ -736,7 +759,7 @@ export default {
     },
 
     visualizeMarkedState(markRef, marked) {
-      if (markRef.constructor.name === "Variable") {
+      if (markRef instanceof Variable) {
         if (marked) {
           markRef.data.opacity = 0.5;
         } else {

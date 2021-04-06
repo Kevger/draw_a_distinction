@@ -58,7 +58,7 @@ export default class Cross {
         }
 
         if (this.childs.length == 1 &&
-            this.childs[0].constructor.name === 'Variable') {
+            this.childs[0] instanceof Variable) {
             const marked = this.childs[0].markCollapse(drawHandler);
             if (marked) {
                 this.childs.splice(0, 1);
@@ -89,7 +89,7 @@ export default class Cross {
             const m1 = this.childs[1].markCollapse(drawHandler);
 
             if (m0) {
-                if (this.childs[0].constructor.name !== 'Variable') {
+                if (!(this.childs[0] instanceof Variable)) {
                     const childChild = this.childs[0].childs[0];
                     drawHandler(childChild,
                         { x: this.childs[0].data.x, y: this.childs[0].data.y, radius: this.childs[0].data.radius },
@@ -99,7 +99,7 @@ export default class Cross {
                     this.childs.splice(0, 1);
             }
             if (m1) {
-                if (this.childs[1].constructor.name !== 'Variable') {
+                if (!(this.childs[1] instanceof Variable)) {
                     const childChild = this.childs[1].childs[0];
                     drawHandler(childChild,
                         { x: this.childs[1].data.x, y: this.childs[1].data.y, radius: this.childs[1].data.radius },

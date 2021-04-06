@@ -64,10 +64,10 @@
                 axiom, if the variable is a cross or not. Two variables in the
                 same space are a logical or. A cross and no cross are just one
                 cross and two crosses are by the first axiom equivalent to one
-                cross, but no crosses at all are just no crosses. Further logical
-                functions can be taken from the picture below. In the simulator,
-                a logic table can be generated and displayed on the basis of the
-                current expression.
+                cross, but no crosses at all are just no crosses. Further
+                logical functions can be taken from the picture below. In the
+                simulator, a logic table can be generated and displayed on the
+                basis of the current expression.
               </p>
               <v-img src="img/logic.png" :contain="true"></v-img>
               <p>
@@ -95,8 +95,8 @@
                 the field of radical constructivism. It provides a solid basis
                 for explaining autopoetic systems (Humberto Maturana and
                 Francisco Varela) and for deriving theories of observation and
-                system theory (Niklas Luhmann) and cybernetic concepts (Heinz von
-                Foerster). Moreover, there are opinions that the statements
+                system theory (Niklas Luhmann) and cybernetic concepts (Heinz
+                von Foerster). Moreover, there are opinions that the statements
                 presented in Laws of Form are the basis of all cognition. In
                 this simulator, however, only the basics will be presented.
               </p>
@@ -112,7 +112,7 @@
               color="primary"
               @click="$emit('windowClosed')"
             >
-              <v-icon>mdi-check-bold</v-icon>
+              <v-icon>{{mdiCheckBold}}</v-icon>
             </v-btn>
           </v-card-actions>
         </v-container>
@@ -122,9 +122,13 @@
 </template>
 
 <script>
+import { mdiCheckBold } from "@mdi/js";
+
 export default {
   data() {
-    return {};
+    return {
+      mdiCheckBold,
+    };
   },
   methods: {},
 };
