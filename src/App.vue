@@ -3,7 +3,7 @@
     <v-main>
       <Space @blur="closeMenu2" v-on:mouseDown="closeMenu2" />
       <MenuProjects ref="menuProjects" @explainWhy="explainingWhy = true" />
-      <v-dialog v-if="explainingWhy" v-model="explainingWhy" fullscreen>
+      <v-dialog :fullscreen="$vuetify.breakpoint.mdAndDown" scrollable v-if="explainingWhy" max-width="600" v-model="explainingWhy">
         <ExplanationWhy @windowClosed="explainingWhy = false" />
       </v-dialog>
       <v-dialog persistent v-model="askForUpdate" v-if="askForUpdate" max-width="290">

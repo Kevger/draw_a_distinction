@@ -104,15 +104,16 @@
           </v-col>
 
           <v-card-actions>
+            <v-spacer></v-spacer>
             <v-btn
               dark
               fab
               bottom
               right
-              color="primary"
+              color="green darken-1"
               @click="$emit('windowClosed')"
             >
-              <v-icon>{{mdiCheckBold}}</v-icon>
+              <v-icon>{{ mdiCheckBold }}</v-icon>
             </v-btn>
           </v-card-actions>
         </v-container>

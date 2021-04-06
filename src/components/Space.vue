@@ -567,6 +567,7 @@ export default {
           //start animation
           if (child instanceof Variable) {
             if (!endstate) {
+              thisOperation = "crossing";
               //Variable disapearing
               ref.to({
                 x: child.data.x,
