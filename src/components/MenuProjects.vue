@@ -1,10 +1,10 @@
 <template>
-  <v-menu ref="refMenuProjects" left bottom>
+  <v-menu  ref="refMenuProjects" left bottom>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         style="position: absolute; top: 1%; right: 1%"
         small
-        color="primary"
+        color="rgb(200,200,200,0.2)"
         v-bind="attrs"
         v-on="on"
       >

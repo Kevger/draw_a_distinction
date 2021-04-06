@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-card width="600px">
+      <v-card class="elevation-12" width="600px">
         <v-container>
           <v-card-title>Draw a distinction!</v-card-title>
           <v-col cols="12">

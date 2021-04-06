@@ -55,7 +55,6 @@
       v-model="active_menu"
       :close-on-content-click="false"
       :close-on-click="false"
-      :nudge-width="135"
       offset-y
     >
       <template v-slot:activator="{ on }">
@@ -66,7 +65,7 @@
             style="position: absolute; top: 1%; left: 1%"
             v-ripple
             color="primary"
-            text-color="white"
+            text-color="black"
             v-on="on"
           >
             <v-avatar>
@@ -77,7 +76,7 @@
         </v-hover>
       </template>
 
-      <v-card class="mt-1" dark color="rgb(0,0,0,0.5)">
+      <v-card class="mt-1" color="rgb(200,200,200,0.2)">
         <v-card-title
           class="mt-n1 mb-0"
           style="
@@ -85,6 +84,7 @@
             padding-right: 2%;
             padding-bottom: 1%;
             padding-top: 2%;
+            color: rgb(0, 0, 0, 1);
           "
           >Laws of Form</v-card-title
         >
@@ -94,6 +94,7 @@
             padding-right: 2%;
             padding-bottom: 1%;
             padding-top: 3%;
+            color: rgb(0, 0, 0, 1);
           "
           >Draw a distinction!</v-card-subtitle
         >
@@ -106,8 +107,12 @@
               v-model="animationDuration"
               min="0"
               max="5"
+              style="max-width: 205pt"
               thumb-label
-              thumb-color="light-grey"
+              thumb-color="grey darken-4"
+              track-color="grey darken-4"
+              color="black"
+              text-color="black"
               hide-details
               step="0.2"
               label="Delay"
@@ -125,15 +130,18 @@
               <v-tooltip bottom style="flex: 1 0 auto">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    class="mx-1 px-2"
+                    class="mx-1 px-3 black--text"
+                    style="width: 65pt;"
+                    tile
                     v-model="isRunning"
+                    
                     :color="isRunning ? 'secondary' : 'primary'"
                     @click="startCollapse"
-                    tile
                     v-bind="attrs"
                     v-on="on"
                     :loading="isRunning"
                     :disabled="isRunning"
+                    light
                   >
                     <v-icon>{{ mdiPlay }}</v-icon
                     >run
@@ -148,12 +156,12 @@
               <v-tooltip bottom style="flex: 1 0 auto">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    class="mx-1 px-2"
+                    class="mx-1 px-3 black--text"
+                    style="width: 65pt"
                     v-model="configKonva.draggable"
                     :color="configKonva.draggable ? 'secondary' : 'primary'"
                     value="false"
                     @click="configKonva.draggable = !configKonva.draggable"
-                    hide-details
                     tile
                     v-bind="attrs"
                     v-on="on"
@@ -169,23 +177,21 @@
               <v-tooltip bottom style="flex: 1 0 auto">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    class="mx-1 pr-1"
+                    class="mx-1 px-3 black--text"
+                    style="width: 65pt"
+                    tile
                     v-model="activeVisualizeMarkedState"
                     :color="
                       activeVisualizeMarkedState ? 'secondary' : 'primary'
                     "
-                    value="false"
                     @click="
                       activeVisualizeMarkedState = !activeVisualizeMarkedState
                     "
-                    hide-details
                     :disabled="isRunning"
-                    tile
                     v-bind="attrs"
                     v-on="on"
-                    style="font-size: 85%"
                   >
-                    <v-icon small>{{ mdiChartDonut }}</v-icon
+                    <v-icon>{{ mdiChartDonut }}</v-icon
                     >Show
                   </v-btn>
                 </template>
@@ -194,20 +200,20 @@
             </v-card-actions>
           </v-row>
 
-          <v-row class="ml-n3 mb-n3 mt-2" no-gutters>
+          <v-row class="ml-n3 mb-n3 mt-2 mr-n2" no-gutters>
             <v-card-actions>
               <v-btn
-                :class="`mx-1 px-2 elevation-${
+                style="width: 65pt"
+                :class="`black--text mx-1 px-3 elevation-${
                   activeVariableCreation == item.name ? 8 : 2
                 } `"
                 :disabled="isRunning"
                 :key="item.name"
-                v-for="item in this.variables"
+                v-for="item in this.variables.slice(0, 3)"
                 tile
                 hide-details
-                :ripple="true"
                 :color="
-                  activeVariableCreation == item.name ? 'secondary' : 'primary'
+                  activeVariableCreation == item.name ? 'grey' : 'white'
                 "
                 @click="
                   activeVariableCreation =
@@ -217,10 +223,46 @@
                 {{ item.name }}
                 <v-switch
                   class="mb-0 pa-0"
+                  style="margin-right: 0pt; height: 88%; vertical-align: middle"
                   dense
                   @click.stop="variablesChanged = !variablesChanged"
                   v-model="item.value"
-                  :ripple="true"
+                />
+              </v-btn>
+            </v-card-actions>
+          </v-row>
+          <v-row
+            v-if="activeMoreVariables"
+            class="ml-n3 mb-n3 mt-1 mr-n2"
+            no-gutters
+          >
+            <v-card-actions>
+              <v-btn
+              light
+                style="width: 65pt"
+                :class="`black--text mx-1 px-3 elevation-${
+                  activeVariableCreation == item.name ? 8 : 2
+                } `"
+                :disabled="isRunning"
+                :key="item.name"
+                v-for="item in this.variables.slice(3, 6)"
+                tile
+                hide-details
+                :color="
+                  activeVariableCreation == item.name ? 'grey' : 'white'
+                "
+                @click="
+                  activeVariableCreation =
+                    activeVariableCreation != item.name ? item.name : null
+                "
+              >
+                {{ item.name }}
+                <v-switch
+                  class="mb-0 pa-0 black--text"
+                  style="margin-right: 0pt; height: 88%; vertical-align: middle"
+                  dense
+                  @click.stop="variablesChanged = !variablesChanged"
+                  v-model="item.value"
                 />
               </v-btn>
             </v-card-actions>
@@ -229,7 +271,7 @@
       </v-card>
     </v-menu>
     <v-chip
-      color="primary"
+      color="rgb(200,200,200,0.2)"
       style="
         position: absolute;
         left: 1%;
@@ -239,9 +281,10 @@
         padding-bottom: 0.5%;
         padding-top: 0.5%;
       "
-      text-color="white"
+      text-color="black"
+      tile
       label
-      :class="`elevation-2`"
+      :class="`elevation-5`"
     >
       <v-icon v-if="isRunning">{{
         statusOperation == "crossing"
@@ -263,8 +306,9 @@
         <v-hover>
           <v-btn
             small
+            class="black--text"
             @click="openLogicTable"
-            color="primary"
+            color="rgb(200,200,200,0.2)"
             style="position: absolute; bottom: 1%; right: 1%"
             v-on="on"
           >
@@ -273,7 +317,8 @@
         </v-hover>
       </template>
       <v-card
-        color="rgb(0,0,0,0.5)"
+        class="mt-n2 pa-0 mb-n1 black--text"
+        color="rgb(200,200,200,0.2)"
         style="
           padding-left: 0%;
           padding-right: 0%;
@@ -281,14 +326,34 @@
           padding-top: 0%;
         "
       >
-        <v-card-title>Logic table</v-card-title>
-        <v-card-subtitle small>Logics of LoF</v-card-subtitle>
+        <v-row>
+          <v-col cols="7" class="pa-0 mx-0 mr-n2">
+            <v-card-title>Logic table</v-card-title>
+          </v-col>
+          <v-col cols="5" class="pt-4 ma-0 text-right">
+            <v-btn
+              align="right"
+              class="elevation-5"
+              x-small
+              style="font-size: 40%"
+              tile
+              :color="activeMoreVariables ? 'grey' : 'white'"
+              white
+              @click.stop="toggleMoreVariables"
+              label="More Variables"
+              >Add Variables</v-btn
+            >
+          </v-col>
+        </v-row>
+
         <v-data-table
           style="
             padding-left: 0%;
             padding-right: 0%;
             padding-bottom: 0%;
             padding-top: 0%;
+            background-color: rgb(255, 255, 255, 0.5);
+            text-color: rgb(0, 0, 0);
           "
           dense
           color="primary"
@@ -347,6 +412,12 @@ export default {
         { name: "Y", value: false, active: 0 },
         { name: "Z", value: false, active: 0 },
       ],
+      moreVariables: [
+        { name: "A", value: false, active: 0 },
+        { name: "B", value: false, active: 0 },
+        { name: "C", value: false, active: 0 },
+      ],
+
       variablesChanged: false,
       idCnt: 0, //mark id
       vidCnt: 10000000, // variable id - so that idCnt (marks) and vidCnt will not have the same values
@@ -354,6 +425,7 @@ export default {
       active_menu: true,
       isRunning: false,
       active_logic_table: false,
+      activeMoreVariables: false,
       logicTable: {},
       mCircleConfig: {
         startX: 0,
@@ -376,7 +448,7 @@ export default {
         strokeWidth: 1,
         visible: false,
         align: "center",
-        verticalAlign: "middle",
+        verticalAlign: "middle", //change to top in mounted for safari version
         opacity: 0.5,
         width: 20,
         height: 20,
@@ -397,18 +469,46 @@ export default {
       touchLastCenter: null,
       touchLastDist: 0,
       blockOtherMessages: false,
-
+      isSafari: false,
+      browserOffsetX: 1.0,
+      browserOffsetY: 1.0,
       mdiCog: mdiCog,
       mdiMetronome: mdiMetronome,
-      mdiPlay : mdiPlay,
+      mdiPlay: mdiPlay,
       mdiCursorPointer: mdiCursorPointer,
       mdiChartDonut: mdiChartDonut,
-      mdiGateXor:mdiGateXor,
-      mdiCircleDouble:mdiCircleDouble,
-      mdiCircleMultipleOutline:mdiCircleMultipleOutline,
+      mdiGateXor: mdiGateXor,
+      mdiCircleDouble: mdiCircleDouble,
+      mdiCircleMultipleOutline: mdiCircleMultipleOutline,
     };
   },
   methods: {
+    toggleMoreVariables() {
+      // false -> true means add 3 more variables
+      if (!this.activeMoreVariables) {
+        this.moreVariables.forEach((e) => this.variables.push(e));
+      }
+      // true -> false means remove the 3 additional variables
+      else {
+        // remove all active additional variables through marked for deletion
+        const nameList = this.moreVariables.map((e) => e.name);
+        this.variablesList.forEach((e) => {
+          if (nameList.includes(e.data.text)) e.data.markedForDeletion = true;
+        });
+        this.unwrittenCross.removeMarkedForDeletion();
+        this.deleteItems();
+
+        for (let i = 0; i < this.moreVariables.length; ++i) {
+          this.$delete(this.variables, this.variables.length - 1); // splice doesnt work in vue
+        }
+        this.unwrittenCross.refresh(null);
+        this.unwrittenCross.isMarked(this.visualizeMarkedState);
+        this.calculateLogicTable();
+      }
+
+      this.activeMoreVariables = !this.activeMoreVariables;
+    },
+
     openLogicTable() {
       this.calculateLogicTable();
     },
@@ -422,7 +522,7 @@ export default {
         height: height,
         visible: true,
         align: "center",
-        verticalAlign: "middle",
+        verticalAlign: this.isSafari ? "top" : "middle", //change to top in mounted for safari version
         strokeWidth: strokeWidth,
         id: this.vidCnt++,
         radius: radius,
@@ -1045,6 +1145,14 @@ export default {
     },
   },
   mounted() {
+    // not a good solution, but sadly safari and chrome behave differently
+    // in drawing letters and action buttons (ugly offset)
+    this.isSafari = !!navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
+
+    if (this.isSafari) {
+      //change to top in mounted for safari version
+      this.mTextConfig.verticalAlign = "top";
+    }
     this.unwrittenCross = new Cross(
       "unwritten cross",
       this.createCircle(0, 0, Infinity),

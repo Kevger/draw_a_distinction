@@ -7,6 +7,18 @@ export default class Cross {
         this.depth = depth;
     }
 
+    removeMarkedForDeletion() {
+        // go through all following nodes and remove the elements which are marked for deletion
+        for (let i = 0; i < this.childs.length; ++i) {
+            if (this.childs[i].data.markedForDeletion) {
+                this.childs.splice(i, 1);
+                --i;
+            }
+            else if (!(this.childs[i] instanceof Variable)) {
+                this.childs[i].removeMarkedForDeletion();
+            }
+        }
+    }
 
     isMarked(visualizeMarkedStateFunc = null) {
         let marked = false;
@@ -153,9 +165,9 @@ export default class Cross {
 }
 
 
-export class Variable extends Cross{
+export class Variable extends Cross {
     constructor(name, data, depth = 0) {
-        super(name,data,depth)
+        super(name, data, depth)
         this.marked = false;
     }
 
