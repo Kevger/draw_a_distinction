@@ -131,10 +131,9 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     class="mx-1 px-3 black--text"
-                    style="width: 65pt;"
+                    style="width: 65pt"
                     tile
                     v-model="isRunning"
-                    
                     :color="isRunning ? 'secondary' : 'primary'"
                     @click="startCollapse"
                     v-bind="attrs"
@@ -212,9 +211,7 @@
                 v-for="item in this.variables.slice(0, 3)"
                 tile
                 hide-details
-                :color="
-                  activeVariableCreation == item.name ? 'grey' : 'white'
-                "
+                :color="activeVariableCreation == item.name ? 'grey' : 'white'"
                 @click="
                   activeVariableCreation =
                     activeVariableCreation != item.name ? item.name : null
@@ -223,8 +220,14 @@
                 {{ item.name }}
                 <v-switch
                   class="mb-0 pa-0"
-                  style="margin-right: 0pt; height: 88%; vertical-align: middle"
+                  style="
+                    margin-right: 0pt !important;
+                    height: 88%;
+                    vertical-align: middle;
+                    width: 55%;
+                  "
                   dense
+                  :ripple="false"
                   @click.stop="variablesChanged = !variablesChanged"
                   v-model="item.value"
                 />
@@ -238,7 +241,7 @@
           >
             <v-card-actions>
               <v-btn
-              light
+                light
                 style="width: 65pt"
                 :class="`black--text mx-1 px-3 elevation-${
                   activeVariableCreation == item.name ? 8 : 2
@@ -248,9 +251,7 @@
                 v-for="item in this.variables.slice(3, 6)"
                 tile
                 hide-details
-                :color="
-                  activeVariableCreation == item.name ? 'grey' : 'white'
-                "
+                :color="activeVariableCreation == item.name ? 'grey' : 'white'"
                 @click="
                   activeVariableCreation =
                     activeVariableCreation != item.name ? item.name : null
@@ -258,9 +259,15 @@
               >
                 {{ item.name }}
                 <v-switch
-                  class="mb-0 pa-0 black--text"
-                  style="margin-right: 0pt; height: 88%; vertical-align: middle"
+                  class="mb-0 pa-0"
+                  style="
+                    margin-right: 0pt !important;
+                    height: 88%;
+                    vertical-align: middle;
+                    width: 55%;
+                  "
                   dense
+                  :ripple="false"
                   @click.stop="variablesChanged = !variablesChanged"
                   v-model="item.value"
                 />
@@ -1169,6 +1176,16 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-application--is-ltr
+  .v-input--selection-controls__input
+  .v-application--is-ltr
+  .v-input--selection-controls__input input[role=switch]
+   {
+  margin-right: 0px !important;
+  padding: 0px !important;
+  height: min-content !important;
+  width: min-content !important;
+}
 h3 {
   margin: 40px 0 0;
 }
