@@ -1,7 +1,7 @@
 # Laws of Form Simulator
 
 [Live Demo - Draw a distinction!](https://lawsofform.web.app/ "Draw a distinction!")
-
+![Screenshot](github_images/Screenshot.png)
 ## About
 
 In 1969 George Spencer-Brown published the work »Laws of Form« (LoF),
