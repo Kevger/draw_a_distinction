@@ -37,7 +37,9 @@
                 the lion once.
               </p>
               <v-img src="img/calling.png" :contain="true"></v-img>
+              <v-img src="img/LawOfCalling.gif" :contain="true"></v-img>
               <p>
+                <br />
                 The second axiom is »The law of Crossing«. A distinction in a
                 distinction annuls the distinction. In this case, if I have two
                 distinctions stacked inside each other, then that is equivalent
@@ -46,7 +48,9 @@
                 ignore here the re-entry indicated in LoF).
               </p>
               <v-img src="img/crossing.png" :contain="true"></v-img>
+              <v-img src="img/LawOfCrossing.gif" :contain="true"></v-img>
               <p>
+                <br />
                 In addition, different variables can be introduced that can
                 stand for either a mark or no mark. This is equivalent to
                 whether the mark has a marked area inside and is thus nihilated
@@ -62,7 +66,7 @@
                 one a false one. The simplest logical operation is that of
                 negation. A cross around a variable negates it by the second
                 axiom, if the variable is a cross or not. Two variables in the
-                same space are a logical or. A cross and no cross are just one
+                same space are a »logical Or« (disjunction). A cross and no cross are just one
                 cross and two crosses are by the first axiom equivalent to one
                 cross, but no crosses at all are just no crosses. Further
                 logical functions can be taken from the picture below. In the
@@ -70,7 +74,9 @@
                 basis of the current expression.
               </p>
               <v-img src="img/logic.png" :contain="true"></v-img>
+              <v-img src="img/Variables.gif" :contain="true"></v-img>
               <p>
+                <br />
                 The simulator offers several functions. The Run function applies
                 both axioms to the current expression until the expression has
                 been fully converted to a marked or unmarked state.

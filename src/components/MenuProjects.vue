@@ -32,7 +32,7 @@
       </v-list-item>
       <v-list-item>
         <v-btn text @click="$emit('explainWhy')">
-          <span class="mr-2">About</span>
+          <span class="mr-2">About Laws of Form</span>
           <v-icon>{{mdiHelpCircle}}</v-icon>
         </v-btn>
       </v-list-item>
