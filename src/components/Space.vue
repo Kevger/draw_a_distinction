@@ -99,8 +99,7 @@
           >Draw a distinction!</v-card-subtitle
         >
         <v-container
-          style="padding-left: 2%; padding-right: 2%; padding-top: 0%"
-          fluid
+          style="padding-left: 2%; padding-right: 2%; padding-top: 0%; overflow-y: hidden; overflow-x: hidden;"
         >
           <v-row class="ma-0 pa-0" no-gutters>
             <v-slider
@@ -331,6 +330,7 @@
           padding-right: 0%;
           padding-bottom: 0%;
           padding-top: 0%;
+          overflow: hidden;
         "
       >
         <v-row>
