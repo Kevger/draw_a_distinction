@@ -30,6 +30,8 @@ call the »car« (which is equivalent to making a distinction) and
 then call the »car« again, it is the same as if I called the
 car once.
 ![the  mark](github_images/calling.jpeg)
+![law of calling](public/img/LawOfCalling.gif)
+
 
 The second axiom is »The law of Crossing«. A distinction in a
 distinction annuls the distinction. In this case, if I have two
@@ -38,6 +40,8 @@ to the unmarked state. Each expression can be transformed into
 exactly one of two states, the marked or unmarked space (we
 ignore here the re-entry indicated in LoF).
 ![the  mark](github_images/crossing.jpeg)
+![law of crossing](public/img/LawOfCrossing.gif)
+
 
 ## Variables
 
@@ -49,6 +53,7 @@ individually toggleable in this simulator. Crosses and Variables
 (which have a collision check of a circle) are not allowed to
 intersect.
 ![the  mark](github_images/variables.jpeg)
+![variables and logic](public/img/Variables.gif)
 
 ## Logic
 
@@ -67,6 +72,7 @@ current expression.
 The simulator offers several functions. The Run function applies
 both axioms to the current expression until the expression has
 been fully converted to a marked or unmarked state.
+
 
 ## More
 In addition, the show function can be used to visualize whether
