@@ -97,4 +97,5 @@ Foerster). Moreover, there are opinions that the statements
 presented in Laws of Form are the basis of all cognition. In
 this simulator, however, only the basics will be presented.
 
-
+## Technology
+Frameworks used: vue.js and konva.js
