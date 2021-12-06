@@ -3,15 +3,26 @@
     <v-main>
       <Space @blur="closeMenu2" v-on:mouseDown="closeMenu2" />
       <MenuProjects ref="menuProjects" @explainWhy="explainingWhy = true" />
-      <v-dialog :fullscreen="$vuetify.breakpoint.mdAndDown" scrollable v-if="explainingWhy" max-width="600" v-model="explainingWhy">
+      <v-dialog
+        :fullscreen="$vuetify.breakpoint.mdAndDown"
+        scrollable
+        v-if="explainingWhy"
+        max-width="600"
+        v-model="explainingWhy"
+      >
         <ExplanationWhy @windowClosed="explainingWhy = false" />
       </v-dialog>
-      <v-dialog persistent v-model="askForUpdate" v-if="askForUpdate" max-width="290">
+      <v-dialog
+        persistent
+        v-model="askForUpdate"
+        v-if="askForUpdate"
+        max-width="290"
+      >
         <v-card>
           <v-card-title class="headline"> Update available </v-card-title>
-          <v-card-text
-            >New update available. Do you want to update now?</v-card-text
-          >
+          <v-card-text>
+            New update available. Do you want to update now?
+          </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="green darken-1" text @click="askForUpdate = false">

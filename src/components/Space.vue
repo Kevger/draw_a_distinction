@@ -99,7 +99,13 @@
           >Draw a distinction!</v-card-subtitle
         >
         <v-container
-          style="padding-left: 2%; padding-right: 2%; padding-top: 0%; overflow-y: hidden; overflow-x: hidden;"
+          style="
+            padding-left: 2%;
+            padding-right: 2%;
+            padding-top: 0%;
+            overflow-y: hidden;
+            overflow-x: hidden;
+          "
         >
           <v-row class="ma-0 pa-0" no-gutters>
             <v-slider
@@ -377,11 +383,8 @@
 </template>
 
 
-
-
-
 <script>
-import Cross, { Variable } from "../plugins/tree";
+import Cross, { Variable } from "../plugins/lof";
 import {
   mdiCog,
   mdiMetronome,
@@ -508,7 +511,7 @@ export default {
         for (let i = 0; i < this.moreVariables.length; ++i) {
           this.$delete(this.variables, this.variables.length - 1); // splice doesnt work in vue
         }
-        this.unwrittenCross.refresh(null);
+        this.unwrittenCross.refreshNames(null);
         this.unwrittenCross.isMarked(this.visualizeMarkedState);
         this.calculateLogicTable();
       }
@@ -519,6 +522,7 @@ export default {
     openLogicTable() {
       this.calculateLogicTable();
     },
+
     createVariable(x, y, text, fontSize, width, height, radius, strokeWidth) {
       const newVariable = {
         x: x,
@@ -539,6 +543,7 @@ export default {
       };
       return newVariable;
     },
+
     createCircle(x, y, r, strokeWidth = 1) {
       const newCircle = {
         x: x,
@@ -553,6 +558,7 @@ export default {
       };
       return newCircle;
     },
+
     getRelativePointerPos() {
       const scale = this.stage.scaleX();
       const pointer = this.stage.getPointerPosition();
@@ -561,6 +567,7 @@ export default {
         y: (pointer.y - this.stage.y()) / scale,
       };
     },
+
     handleMouseDown() {
       const pointer = this.getRelativePointerPos();
       if (!this.configKonva.draggable) {
@@ -739,6 +746,7 @@ export default {
         this.animationDelayBuffer = 0;
       }, this.animationDelayBuffer);
     },
+
     // Creates a notification text and blocks the other messages from being displayed
     createNotification(text, time = 1000) {
       this.blockOtherMessages = true;
@@ -747,10 +755,12 @@ export default {
         this.blockOtherMessages = false;
       }, time);
     },
+
     // prints a status message
     printStatusMessage(text) {
       if (!this.blockOtherMessages) this.statusText = text;
     },
+
     createCross() {
       //get mark in which the new variable or mark is inn
       const insideRef = this.unwrittenCross.isIn(
@@ -853,6 +863,7 @@ export default {
         this.calculateLogicTable();
       }
     },
+
     handleMouseUp() {
       this.mCircleConfig.visible = false;
       this.mTextConfig.visible = false;
@@ -861,7 +872,7 @@ export default {
           this.createCross();
         }
         this.deleteItems();
-        this.unwrittenCross.refresh(null);
+        this.unwrittenCross.refreshNames(null);
       }
       this.unwrittenCross.isMarked(this.visualizeMarkedState);
     },
@@ -899,6 +910,7 @@ export default {
         variable.marked = !variableState.value;
       }
     },
+
     handleMouseMove() {
       const pointer = this.getRelativePointerPos();
       if (this.mCircleConfig.visible) {
@@ -1003,7 +1015,7 @@ export default {
       //  console.error(this.variablesList);
       //  console.error(this.list);
       //}
-      this.unwrittenCross.refresh(null);
+      this.unwrittenCross.refreshNames(null);
       // refresh logic table if open
       if (this.active_logic_table) {
         this.calculateLogicTable();
@@ -1080,6 +1092,7 @@ export default {
         this.handleMouseMove();
       }
     },
+
     handleTouchStart(e) {
       e.evt.preventDefault();
       //normal blur event doesnt occur if touch is used
@@ -1089,9 +1102,11 @@ export default {
       this.touchLastCenter = null;
       this.handleMouseDown();
     },
+
     handleTouchEnd() {
       this.handleMouseUp();
     },
+
     handleScroll(e) {
       const scaleBy = 1.01;
 
@@ -1114,6 +1129,7 @@ export default {
       stage.position(newPos);
       stage.batchDraw();
     },
+
     handleResize() {
       if (this.stage) {
         /*The value of konfigKonva and dummyValue doesnt 
@@ -1143,14 +1159,17 @@ export default {
         this.stage.draw();
       }
     },
+
     handleOrientationChange() {
       //switch innerheight and innerwidth with the handler, because inside
-      //resize event its somehow not properly detected :/
+      //resize event is somehow not properly detected :/
       const tmp = window.innerHeight;
       window.innerHeight = window.innerWidth;
       window.innerWidth = tmp;
     },
   },
+
+
   mounted() {
     // not a good solution, but sadly safari and chrome behave differently
     // in drawing letters and action buttons (ugly offset)
@@ -1179,8 +1198,8 @@ export default {
 .v-application--is-ltr
   .v-input--selection-controls__input
   .v-application--is-ltr
-  .v-input--selection-controls__input input[role=switch]
-   {
+  .v-input--selection-controls__input
+  input[role="switch"] {
   margin-right: 0px !important;
   padding: 0px !important;
   height: min-content !important;
